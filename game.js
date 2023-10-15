@@ -215,10 +215,9 @@ export class MineSweeper {
     }
 
     handleWin() {
-        this.state = "win";
+        if (this.state !== "lose") {
+            this.state = "win";
+        }
         clearTimeout(this.timer);
-
-        // 自动把剩余的M都标上红旗
-        // this.autoFlag();
     }
 }
