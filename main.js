@@ -5,7 +5,7 @@ function setup() {
     var canvas = document.getElementById("game");
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
-        render(ctx, canvas, levels.EXPERT);
+        render(ctx, canvas, levels.BEGINNER);
     }
 }
 
@@ -75,7 +75,7 @@ function render(ctx, canvas, level) {
         renderFeedback(ctx, game.state, faceImages, facePars);
     }
 
-    registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars);
+    registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars, ctx);
 }
 
 // 渲染board
@@ -123,7 +123,7 @@ function renderFeedback(ctx, state, svgImages, { w, x, y }) {
 }
 
 // 注册事件监听
-function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars) {
+function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars, ctx) {
     // 计算click到哪个格子
     function _getGridIndex(x, y) {
         // 获取点击位置相对于Canvas的坐标
@@ -184,30 +184,45 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
 
     const menuBtnGame = document.querySelector('#menu-btn-game');
     const menuPopupGame = document.querySelector('.menu-popup-game');
-    menuBtnGame.addEventListener("click", () => {
+    function handleToggleMemu() {
         if (menuPopupGame.style.visibility === "visible") {
             menuPopupGame.style.visibility = "hidden";
         } else {
             menuPopupGame.style.visibility = "visible";
         }
-    });
+    }
+    menuBtnGame.addEventListener("click", handleToggleMemu);
 
     const beginnerBtn = document.querySelector('#beginner-btn');
     const intermediateBtn = document.querySelector('#intermediate-btn');
     const expertBtn = document.querySelector('#expert-btn');
-    beginnerBtn.addEventListener("click", () => {
-        game.setSize(levels.BEGINNER.size, levels.BEGINNER.n);
+    function setLevel(level) {
         menuPopupGame.style.visibility = "hidden";
-        update();
-    })
-    intermediateBtn.addEventListener("click", () => {
-        game.setSize(levels.INTERMEDIATE.size, levels.INTERMEDIATE.n);
-        menuPopupGame.style.visibility = "hidden";
-        update();
-    })
-    expertBtn.addEventListener("click", () => {
-        game.setSize(levels.EXPERT.size, levels.EXPERT.n);
-        menuPopupGame.style.visibility = "hidden";
-        update();
-    })
+        // 清楚之前的eventListener
+        canvas.removeEventListener("mousedown", handleClickBoard);
+        canvas.removeEventListener("dblclick", handleDoubleClick);
+        menuBtnGame.removeEventListener("click", handleToggleMemu);
+        beginnerBtn.removeEventListener("click", setLevelBeginner)
+        intermediateBtn.removeEventListener("click", setLevelIntermediate)
+        expertBtn.removeEventListener("click", setLevelExpert)
+        
+        // 停止游戏
+        game.restart();
+
+        // 清空 canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        render(ctx, canvas, level);
+    }
+    function setLevelBeginner() {
+        setLevel(levels.BEGINNER);
+    }
+    function setLevelIntermediate() {
+        setLevel(levels.INTERMEDIATE);
+    }
+    function setLevelExpert() {
+        setLevel(levels.EXPERT);
+    }
+    beginnerBtn.addEventListener("click", setLevelBeginner)
+    intermediateBtn.addEventListener("click", setLevelIntermediate)
+    expertBtn.addEventListener("click", setLevelExpert)
 }

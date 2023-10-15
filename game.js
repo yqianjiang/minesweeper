@@ -160,16 +160,23 @@ export class MineSweeper {
                 this.numMineCurr--;
             }
         } else if (val === "M*") {
-            this.board[x][y] = "M?";
+            this.board[x][y] = "M";
             this.numMineCurr++;
         } else if (val === "E*") {
-            this.board[x][y] = "E?";
-            this.numMineCurr++;
-        } else if (val === "M?") {
-            this.board[x][y] = "M";
-        } else if (val === "E?") {
             this.board[x][y] = "E";
+            this.numMineCurr++;
         }
+        // } else if (val === "M*") {
+        //     this.board[x][y] = "M?";
+        //     this.numMineCurr++;
+        // } else if (val === "E*") {
+        //     this.board[x][y] = "E?";
+        //     this.numMineCurr++;
+        // } else if (val === "M?") {
+        //     this.board[x][y] = "M";
+        // } else if (val === "E?") {
+        //     this.board[x][y] = "E";
+        // }
     }
 
     revealRemainingE(x, y) {

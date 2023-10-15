@@ -3,17 +3,38 @@ html {
     display: flex;
     justify-content: center;
 }
+
+.game-window {
+    background: #fff;
+    font-size: 0;
+    border: solid 2px #06f;
+    border-radius: 6px 6px 0 0;
+    width: fit-content;
+    margin: 24px auto;
+}
+
+.window-title-bar {
+    font-size: 14px;
+    background-color: #06f;
+    color: #fff;
+    padding: 8px 12px;
+    margin: 0;
+}
+
 .menu {
     padding: 2px 6px;
     position: relative;
     background-color: rgb(224, 224, 224);
 }
-.menu > button, .menu-popup > button {
+
+.menu>button,
+.menu-popup>button {
     outline: none;
     border: 0;
     font-size: 14px;
     background: transparent;
 }
+
 .menu-popup {
     visibility: hidden;
     position: absolute;
@@ -26,22 +47,28 @@ html {
     background-color: rgb(224, 224, 224);
     border: solid 1px #000;
 }
-.menu-popup > button {
+
+.menu-popup>button {
     text-align: left;
     padding: 6px 16px;
 }
 
-.game-window {
-    background: #fff;
-    font-size: 0;
-    border: solid 2px #06f;
-    border-radius: 6px 6px 0 0;
-    margin-top: 24px;
-}
-.window-title-bar {
-    font-size: 14px;
-    background-color: #06f;
-    color: #fff;
-    padding: 8px 12px;
+
+/* 基本页面样式 */
+body {
+    font-family: Arial, sans-serif;
     margin: 0;
+    padding: 20px;
+}
+
+.game-intros {
+    max-width: 800px;
+    /* text-align: center; */
+    margin: 0 auto;
+}
+
+/* 游戏规则和操作说明样式 */
+ul li,
+ol li {
+    margin: 10px 0;
 }
