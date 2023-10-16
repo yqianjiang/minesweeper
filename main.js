@@ -49,14 +49,9 @@ function render(ctx, canvas, level) {
     const { digitPars: pars } = drawOuterBox(ctx, boardHeight, boardWidth, x0, y0);
 
     // 加载多个SVG图片
-    const digitImages = {};
-    loadDigitImages(digitImages);
-    const faceImages = {};
-    loadFaceImages(faceImages);
-    const svgImages = {};
-    loadBoardImages(svgImages, function () {
-        update();
-    })
+    const digitImages = loadDigitImages(update);
+    const faceImage = loadFaceImages(update);
+    const svgImages = loadBoardImages(update);
 
     const facePars = {
         w: 36,
@@ -72,7 +67,7 @@ function render(ctx, canvas, level) {
         renderDigit(ctx, game.numMineCurr, digitImages, pars);
         renderTime();
         renderBoard(ctx, game.board, w, h, svgImages, x0, y0);
-        renderFeedback(ctx, game.state, faceImages, facePars);
+        renderFeedback(ctx, game.state, faceImage, facePars);
     }
 
     registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars, ctx);
@@ -110,8 +105,7 @@ function renderDigit(ctx, num, svgImages, { x, y, w, h, xgap }) {
 }
 
 // 渲染笑脸
-function renderFeedback(ctx, state, svgImages, { w, x, y }) {
-    const svgImage = svgImages["unpressed"];
+function renderFeedback(ctx, state, svgImage, { w, x, y }) {
     const stateMap = {
         "unpressed": 0,
         "active": 1,  // 揭开新的，持续一下就变回unpressed

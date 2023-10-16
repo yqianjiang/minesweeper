@@ -140,7 +140,8 @@ function drawTopriRT(ctx, [x, y], w) {
     ctx.fill();
 }
 
-export function loadBoardImages(svgImages, callback) {
+export function loadBoardImages(callback) {
+    const svgImages = {}
     // 未挖出的方块
     const ImageClosed = new Image();
     ImageClosed.src = "assets/closed.svg";
@@ -175,20 +176,23 @@ export function loadBoardImages(svgImages, callback) {
         imageNum.src = `assets/type${num}.svg`;
         svgImages[num] = imageNum;
     }
+    return svgImages;
 }
 
-export function loadDigitImages(svgImages, callback) {
+export function loadDigitImages(callback) {
+    const svgImages = {};
     for (const num in new Array(10).fill(0)) {
         const imageNum = new Image();
         imageNum.src = `assets/d${num}.svg`;
         svgImages[num] = imageNum;
     }
     svgImages['0'].onload = callback;
+    return svgImages;
 }
 
-export function loadFaceImages(svgImages, callback) {
+export function loadFaceImages(callback) {
     const img = new Image();
     img.src = `assets/face.svg`;
-    svgImages["unpressed"] = img;
-    svgImages["unpressed"].onload = callback;
+    img.onload = callback;
+    return img;
 }
