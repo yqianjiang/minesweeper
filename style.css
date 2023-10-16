@@ -6,6 +6,9 @@ html {
 
 body {
     overflow: auto;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
 }
 
 .game-window {
@@ -14,7 +17,13 @@ body {
     border: solid 2px #06f;
     border-radius: 6px 6px 0 0;
     width: fit-content;
-    margin: 24px auto;
+    margin: 24px auto 0;
+}
+
+#game-tips {
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 24px;
 }
 
 .window-title-bar {
@@ -66,17 +75,8 @@ button {
     background-color: #fff;
 }
 
-
-/* 基本页面样式 */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-}
-
 .game-intros {
     max-width: 800px;
-    /* text-align: center; */
     margin: 0 auto;
 }
 

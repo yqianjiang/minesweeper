@@ -1,3 +1,4 @@
+import { loadConfig } from './config.js';
 /**
  * 未知的方块表示：
  * 'M' 代表一个 未挖出的 地雷，
@@ -39,6 +40,7 @@ function randInt(lower, upper) {
 
 export class MineSweeper {
     constructor(size, numMine) {
+        const userConfig = loadConfig();
         this.size = size;
         this.numMine = numMine;
         this.numMineCurr = numMine;
@@ -46,7 +48,7 @@ export class MineSweeper {
         this.spentTime = 0;
         this.state = "unpressed";
         this.timer = null;
-        this.isAutoFlag = true;
+        this.isAutoFlag = userConfig.autoFlag;
     }
 
     setSize(size, numMine) {

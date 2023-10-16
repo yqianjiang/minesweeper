@@ -1,34 +1,22 @@
 import { MineSweeper } from "./game.js";
 import { drawOuterBox, loadBoardImages, loadDigitImages, loadFaceImages } from "./draw.js";
+import { levels, loadConfig, updateUserConfig } from './config.js';
 
 function setup() {
     var canvas = document.getElementById("game");
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
-        render(ctx, canvas, levels.BEGINNER);
+        const userConfig = loadConfig();
+        render(ctx, canvas, userConfig.difficulty);
+
+        // 根据userConfig更新文字提示
+        const gameTipsField = document.querySelector('#game-tips');
+        const autoFlagBtn = document.querySelector('#autoflag-btn');
+        setAutoFlagText(userConfig.autoFlag, autoFlagBtn, gameTipsField);
     }
 }
 
-const levels = {
-    SMALL: {
-        size: [8, 8],  // 最小size
-        n: 10,
-    },
-    BEGINNER: {
-        size: [9, 9],
-        n: 10,
-    },
-    INTERMEDIATE: {
-        size: [16, 16],
-        n: 40,
-    },
-    EXPERT: {
-        size: [16, 30],
-        n: 99,
-    }
-}
 setup();
-
 
 // 根据data渲染游戏界面
 function render(ctx, canvas, level) {
@@ -187,14 +175,14 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
     }
     menuBtnGame.addEventListener("click", handleToggleMemu);
 
+    const gameTipsField = document.querySelector('#game-tips');
     const autoFlagBtn = document.querySelector('#autoflag-btn');
     function handleToggleAutoFlag() {
         game.isAutoFlag = !game.isAutoFlag;
-        if (game.isAutoFlag) {
-            autoFlagBtn.innerText = "关闭自动标雷（已开启）";
-        } else {
-            autoFlagBtn.innerText = "打开自动标雷（已关闭）";
-        }
+        updateUserConfig("autoFlag", game.isAutoFlag);
+        setAutoFlagText(game.isAutoFlag, autoFlagBtn, gameTipsField);
+        // 收起菜单？
+        menuPopupGame.style.visibility = "hidden";
     }
     autoFlagBtn.addEventListener("click", handleToggleAutoFlag);
 
@@ -203,14 +191,16 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
     const expertBtn = document.querySelector('#expert-btn');
     function setLevel(level) {
         menuPopupGame.style.visibility = "hidden";
-        // 清楚之前的eventListener
+        updateUserConfig("difficulty", level);
+        // 清除之前的eventListener
         canvas.removeEventListener("mousedown", handleClickBoard);
         canvas.removeEventListener("dblclick", handleDoubleClick);
         menuBtnGame.removeEventListener("click", handleToggleMemu);
-        beginnerBtn.removeEventListener("click", setLevelBeginner)
-        intermediateBtn.removeEventListener("click", setLevelIntermediate)
-        expertBtn.removeEventListener("click", setLevelExpert)
-        
+        beginnerBtn.removeEventListener("click", setLevelBeginner);
+        intermediateBtn.removeEventListener("click", setLevelIntermediate);
+        expertBtn.removeEventListener("click", setLevelExpert);
+        autoFlagBtn.removeEventListener("click", handleToggleAutoFlag);
+
         // 停止游戏
         game.restart();
 
@@ -230,4 +220,14 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
     beginnerBtn.addEventListener("click", setLevelBeginner)
     intermediateBtn.addEventListener("click", setLevelIntermediate)
     expertBtn.addEventListener("click", setLevelExpert)
+}
+
+function setAutoFlagText(isAutoFlag, autoFlagBtn, gameTipsField) {
+    if (isAutoFlag) {
+        autoFlagBtn.innerText = "关闭自动标雷";
+        gameTipsField.innerText = "* 自动标雷模式已开启，可以在“游戏”菜单下关闭。";
+    } else {
+        autoFlagBtn.innerText = "打开自动标雷";
+        gameTipsField.innerText = "* 自动标雷模式已关闭，可以在“游戏”菜单下开启。";
+    }
 }
