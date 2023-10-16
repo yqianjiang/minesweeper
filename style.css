@@ -31,10 +31,14 @@ body {
     background-color: rgb(224, 224, 224);
 }
 
-.menu>button,
-.menu-popup>button {
+button {
     outline: none;
     border: 0;
+    color: #000;
+}
+
+.menu>button,
+.menu-popup>button {
     font-size: 14px;
     background: transparent;
 }
