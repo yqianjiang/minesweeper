@@ -15,7 +15,7 @@ const neibour = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [
 function revealBoard(board, x, y) {
     let count = 0;
     for (const [dx, dy] of neibour) {
-        if (["M", "M*", "M?", "X"].includes(board[x + dx]?.[y + dy])) { // 所有是雷的格子，不管玩家标了什么
+        if (["M", "M*", "M?", "X", "X*"].includes(board[x + dx]?.[y + dy])) { // 所有是雷的格子，不管玩家标了什么
             count++;
         }
     }
@@ -46,6 +46,7 @@ export class MineSweeper {
         this.spentTime = 0;
         this.state = "unpressed";
         this.timer = null;
+        this.isAutoFlag = true;
     }
 
     setSize(size, numMine) {
@@ -103,7 +104,6 @@ export class MineSweeper {
         if (curr === "M") {
             this.board[x][y] = "X";
             this.handleLose();
-            this.numMineCurr--;
             return;
         }
         // 点击E，需要计算E附近有多少颗雷
@@ -124,6 +124,9 @@ export class MineSweeper {
 
     // 自动标雷
     autoFlag() {
+        if (!this.isAutoFlag) {
+            return;
+        }
         // 检查数字格子周围，如果E或M的数量恰好等于数字，就把E或M都标记为雷
         for (const x in this.board) {
             for (const y in this.board[x]) {
@@ -136,7 +139,7 @@ export class MineSweeper {
                         if (["M", "E", "M?", "E?"].includes(val2)) {
                             candidates.push([dx, dy]);
                             count++;
-                        } else if (["M*", "E*", "X"].includes(val2)) {
+                        } else if (["M*", "E*", "X", "X*"].includes(val2)) {
                             count++;
                         }
                     }
@@ -188,7 +191,7 @@ export class MineSweeper {
             const toReveal = [];
             for (const [dx, dy] of neibour) {
                 const val2 = this.board[x + dx]?.[y + dy];
-                if (["M*", "E*", "X"].includes(val2)) {  // 玩家标记的雷或者已知的雷
+                if (["M*", "E*", "X", "X*"].includes(val2)) {  // 玩家标记的雷或者已知的雷
                     count++;
                 }
                 // 记录一下未知的格子
@@ -211,7 +214,14 @@ export class MineSweeper {
         this.state = "lose";
         clearTimeout(this.timer);
 
-        // 自动把所有格子揭开
+        // 显示所有的雷，用"X*"表示？
+        for (const i in this.board) {
+            for (const j in this.board[i]) {
+                if (this.board[i][j] === "M") {
+                    this.board[i][j] = "X*";
+                }
+            }
+        }
     }
 
     handleWin() {

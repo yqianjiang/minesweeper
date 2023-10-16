@@ -143,16 +143,16 @@ function drawTopriRT(ctx, [x, y], w) {
 export function loadBoardImages(callback) {
     const svgImages = {}
     // 未挖出的方块
-    const ImageClosed = new Image();
-    ImageClosed.src = "assets/closed.svg";
-    ImageClosed.onload = callback;
-    svgImages["E"] = ImageClosed;
-    svgImages["M"] = ImageClosed;
+    const imageClosed = new Image();
+    imageClosed.src = "assets/closed.svg";
+    imageClosed.onload = callback;
+    svgImages["E"] = imageClosed;
+    svgImages["M"] = imageClosed;
 
-    const ImageFlag = new Image();
-    ImageFlag.src = "assets/flag.svg";
-    svgImages["E*"] = ImageFlag;
-    svgImages["M*"] = ImageFlag;
+    const imageFlag = new Image();
+    imageFlag.src = "assets/flag.svg";
+    svgImages["E*"] = imageFlag;
+    svgImages["M*"] = imageFlag;
 
     const imageQuestion = new Image();
     imageQuestion.src = "assets/closed_flag.svg";
@@ -161,9 +161,14 @@ export function loadBoardImages(callback) {
 
     // 已知的方块
     // 踩地雷
-    const ImageMine = new Image();
-    ImageMine.src = "assets/mine_red.svg";
-    svgImages["X"] = ImageMine;
+    const imageMineRed = new Image();
+    imageMineRed.src = "assets/mine_red.svg";
+    svgImages["X"] = imageMineRed;
+
+    // 输的时候揭开的雷
+    const imageMine = new Image();
+    imageMine.src = "assets/mine.svg";
+    svgImages["X*"] = imageMine;
 
     // 数字
     const imageB = new Image();

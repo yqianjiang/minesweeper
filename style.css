@@ -35,10 +35,12 @@ button {
     outline: none;
     border: 0;
     color: #000;
+    cursor: pointer;
 }
 
 .menu>button,
-.menu-popup>button {
+.menu-popup>button,
+.plain-link>button {
     font-size: 14px;
     background: transparent;
 }
@@ -51,14 +53,17 @@ button {
     display: flex;
     flex-direction: column;
     width: 200px;
-    height: 400px;
     background-color: rgb(224, 224, 224);
-    border: solid 1px #000;
+    border: solid 1px gray;
 }
 
 .menu-popup>button {
     text-align: left;
     padding: 6px 16px;
+}
+
+.menu-popup>button:hover {
+    background-color: #fff;
 }
 
 

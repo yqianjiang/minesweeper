@@ -187,6 +187,17 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
     }
     menuBtnGame.addEventListener("click", handleToggleMemu);
 
+    const autoFlagBtn = document.querySelector('#autoflag-btn');
+    function handleToggleAutoFlag() {
+        game.isAutoFlag = !game.isAutoFlag;
+        if (game.isAutoFlag) {
+            autoFlagBtn.innerText = "关闭自动标雷（已开启）";
+        } else {
+            autoFlagBtn.innerText = "打开自动标雷（已关闭）";
+        }
+    }
+    autoFlagBtn.addEventListener("click", handleToggleAutoFlag);
+
     const beginnerBtn = document.querySelector('#beginner-btn');
     const intermediateBtn = document.querySelector('#intermediate-btn');
     const expertBtn = document.querySelector('#expert-btn');
