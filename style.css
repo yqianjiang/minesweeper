@@ -4,6 +4,10 @@ html {
     justify-content: center;
 }
 
+body {
+    overflow: auto;
+}
+
 .game-window {
     background: #fff;
     font-size: 0;
