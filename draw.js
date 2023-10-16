@@ -1,3 +1,5 @@
+import { drawDigitBg } from "./components/digit.js"
+
 const color = {
     BG_COLOR_MAIN: "#BDBDBD",
     BORDER_COLOR_LIGHT: "#fff",
@@ -68,40 +70,6 @@ function _drawBox(ctx, boardHeight, boardWidth, x0, y0) {
     return { drawOutter, drawMiddle, drawInner };
 }
 
-function _drawDigitBg(ctx, boardWidth, x0, yTopBox) {
-    // 显示数字
-    ctx.fillStyle = "#000";
-    const digitPars = {
-        w: 18,
-        h: 36,
-        mx: 12,
-        xgap: 4,
-        my: 0,  // 居中
-        p: 2,
-        y0: yTopBox,
-        x0left: x0,
-        x: x0,
-        xleft: x0,
-        y: yTopBox,
-    }
-    digitPars.my = (H_TOPBOX - digitPars.h) / 2 - digitPars.p;
-    digitPars.x0left += boardWidth - (digitPars.w + digitPars.xgap) * 3 - digitPars.mx;
-
-    // 图片的x, y
-    digitPars.x += digitPars.mx + digitPars.p;
-    digitPars.xleft = digitPars.x0left + digitPars.p;
-    digitPars.y += digitPars.my + digitPars.p;
-
-    function drawDigitBg(ctx, [x0, y0], { w, h, my, p, xgap }) {
-        ctx.fillRect(x0, y0 + my, (w + xgap) * 3, h + p * 2);
-    }
-
-    drawDigitBg(ctx, [x0 + digitPars.mx, yTopBox], digitPars);
-    drawDigitBg(ctx, [digitPars.x0left, yTopBox], digitPars);
-
-    return { digitPars };
-}
-
 export function drawOuterBox(ctx, boardHeight, boardWidth, x0, y0) {
     ctx.fillStyle = color.BG_COLOR_MAIN;
     ctx.fillRect(0, 0, boardWidth + x0 * 2, boardHeight + y0 * 2);
@@ -114,7 +82,7 @@ export function drawOuterBox(ctx, boardHeight, boardWidth, x0, y0) {
     const { drawMiddle, drawInner } = _drawBox(ctx, boardHeight, boardWidth, x0, y0);
     drawMiddle();
     drawInner();
-    const { digitPars } = _drawDigitBg(ctx, boardWidth, x0, yTopBox);
+    const { digitPars } = drawDigitBg(ctx, boardWidth, x0, yTopBox, H_TOPBOX);
     // const {drawInner:drawDigitInnerL} = _drawBox(ctx, digitPars.h + digitPars.p*2, (digitPars.w+digitPars.xgap)*3, x0 + digitPars.mx, yTopBox);
     // drawDigitInnerL();
     // const {drawInner:drawDigitInnerR} = _drawBox(ctx, digitPars.h + digitPars.p*2, (digitPars.w+digitPars.xgap)*3, x0 + digitPars.x0left, yTopBox);
@@ -138,66 +106,4 @@ function drawTopriRT(ctx, [x, y], w) {
     ctx.lineTo(x + w, y);
     ctx.lineTo(x, y);
     ctx.fill();
-}
-
-export function loadBoardImages(callback) {
-    const svgImages = {}
-    // 未挖出的方块
-    const imageClosed = new Image();
-    imageClosed.src = "assets/closed.svg";
-    imageClosed.onload = callback;
-    svgImages["E"] = imageClosed;
-    svgImages["M"] = imageClosed;
-
-    const imageFlag = new Image();
-    imageFlag.src = "assets/flag.svg";
-    svgImages["E*"] = imageFlag;
-    svgImages["M*"] = imageFlag;
-
-    const imageQuestion = new Image();
-    imageQuestion.src = "assets/closed_flag.svg";
-    svgImages["E?"] = imageQuestion;
-    svgImages["M?"] = imageQuestion;
-
-    // 已知的方块
-    // 踩地雷
-    const imageMineRed = new Image();
-    imageMineRed.src = "assets/mine_red.svg";
-    svgImages["X"] = imageMineRed;
-
-    // 输的时候揭开的雷
-    const imageMine = new Image();
-    imageMine.src = "assets/mine.svg";
-    svgImages["X*"] = imageMine;
-
-    // 数字
-    const imageB = new Image();
-    imageB.src = "assets/type0.svg";
-    svgImages["B"] = imageB;
-
-    for (const num in new Array(9).fill(0)) {
-        if (num === "0") continue;
-        const imageNum = new Image();
-        imageNum.src = `assets/type${num}.svg`;
-        svgImages[num] = imageNum;
-    }
-    return svgImages;
-}
-
-export function loadDigitImages(callback) {
-    const svgImages = {};
-    for (const num in new Array(10).fill(0)) {
-        const imageNum = new Image();
-        imageNum.src = `assets/d${num}.svg`;
-        svgImages[num] = imageNum;
-    }
-    svgImages['0'].onload = callback;
-    return svgImages;
-}
-
-export function loadFaceImages(callback) {
-    const img = new Image();
-    img.src = `assets/face.svg`;
-    img.onload = callback;
-    return img;
 }

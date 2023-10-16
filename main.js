@@ -1,5 +1,8 @@
 import { MineSweeper } from "./game.js";
-import { drawOuterBox, loadBoardImages, loadDigitImages, loadFaceImages } from "./draw.js";
+import { drawOuterBox } from "./draw.js";
+import { renderDigit, loadDigitImages } from "./components/digit.js";
+import { renderFace, loadFaceImages, drawFaceBg } from "./components/face.js";
+import { renderBoard, loadBoardImages } from "./components/board.js";
 import { levels, loadConfig, updateUserConfig } from './config.js';
 
 function setup() {
@@ -33,19 +36,23 @@ function render(ctx, canvas, level) {
     canvas.height = boardHeight + y0 + x0;
     canvas.width = boardWidth + x0 * 2;
 
-    // 画外层背景
+    // 画背景（不需要每帧更新的部分）
     const { digitPars: pars } = drawOuterBox(ctx, boardHeight, boardWidth, x0, y0);
-
-    // 加载多个SVG图片
-    const digitImages = loadDigitImages(update);
-    const faceImage = loadFaceImages(update);
-    const svgImages = loadBoardImages(update);
 
     const facePars = {
         w: 36,
         x: x0 + boardWidth / 2 - 18,
         y: pars.y,
     }
+
+
+    // 加载多个SVG图片
+    const digitImages = loadDigitImages(update);
+    const faceImage = loadFaceImages(update);
+    const svgImages = loadBoardImages(() => {
+        drawFaceBg(ctx, svgImages["E"], facePars);
+        update();
+    });
 
     function renderTime() {
         renderDigit(ctx, game.spentTime, digitImages, { ...pars, x: pars.xleft });
@@ -55,53 +62,10 @@ function render(ctx, canvas, level) {
         renderDigit(ctx, game.numMineCurr, digitImages, pars);
         renderTime();
         renderBoard(ctx, game.board, w, h, svgImages, x0, y0);
-        renderFeedback(ctx, game.state, faceImage, facePars);
+        renderFace(ctx, game.state, faceImage, facePars);
     }
 
     registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars, ctx);
-}
-
-// 渲染board
-function renderBoard(ctx, board, w, h, svgImages, x, y) {
-    // w, h为每个格子的宽高
-    for (const i in board) {
-        for (const j in board[i]) {
-            const cellValue = board[i][j];
-            const xPos = x + w * j;
-            const yPos = y + h * i;
-            if (cellValue in svgImages) {
-                // 根据值获取对应的SVG图像
-                const svgImage = svgImages[cellValue];
-                ctx.drawImage(svgImage, xPos, yPos, w, h);
-            }
-        }
-    }
-}
-
-// 渲染数字
-function renderDigit(ctx, num, svgImages, { x, y, w, h, xgap }) {
-    // num 数字 渲染对应的图片
-    if (num > 999) {
-        num = 999;  // 最多显示三位数
-    }
-    const str = Math.round(num).toString().split('');  // 转成数组，可以从后往前渲染
-
-    for (let i = 2; i >= 0; i--) {
-        const svgImage = svgImages[str.pop() || 0];
-        ctx.drawImage(svgImage, x + i * (w + xgap), y, w, h);
-    }
-}
-
-// 渲染笑脸
-function renderFeedback(ctx, state, svgImage, { w, x, y }) {
-    const stateMap = {
-        "unpressed": 0,
-        "active": 1,  // 揭开新的，持续一下就变回unpressed
-        "win": 2,
-        "lose": 3,
-    }
-    const originW = 20;
-    ctx.drawImage(svgImage, originW * stateMap[state], 0, originW, originW, x, y, w, w);
 }
 
 // 注册事件监听
