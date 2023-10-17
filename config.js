@@ -1,5 +1,5 @@
 // config.js
-const configKey = 'minesweeper_config';
+const configKey = 'minesweeper_config2';
 
 export const levels = {
   BEGINNER: {
@@ -18,7 +18,7 @@ export const levels = {
 
 // 默认配置
 const defaultConfig = {
-  difficulty: levels.BEGINNER,
+  difficulty: "BEGINNER",
   autoFlag: true,
 };
 

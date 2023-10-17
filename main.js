@@ -10,7 +10,7 @@ function setup() {
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
         const userConfig = loadConfig();
-        render(ctx, canvas, userConfig.difficulty);
+        render(ctx, canvas, levels[userConfig.difficulty]);
 
         // 根据userConfig更新文字提示
         const gameTipsField = document.querySelector('#game-tips');
@@ -170,16 +170,16 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
 
         // 清空 canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        render(ctx, canvas, level);
+        render(ctx, canvas, levels[level]);
     }
     function setLevelBeginner() {
-        setLevel(levels.BEGINNER);
+        setLevel("BEGINNER");
     }
     function setLevelIntermediate() {
-        setLevel(levels.INTERMEDIATE);
+        setLevel("INTERMEDIATE");
     }
     function setLevelExpert() {
-        setLevel(levels.EXPERT);
+        setLevel("EXPERT");
     }
     beginnerBtn.addEventListener("click", setLevelBeginner)
     intermediateBtn.addEventListener("click", setLevelIntermediate)

@@ -1,4 +1,5 @@
 import { loadConfig } from './config.js';
+import { submitScore } from './leaderboard.js';
 /**
  * 未知的方块表示：
  * 'M' 代表一个 未挖出的 地雷，
@@ -227,8 +228,12 @@ export class MineSweeper {
     }
 
     handleWin() {
-        if (this.state !== "lose") {
+        if (this.state === "unpressed") {
             this.state = "win";
+            const userConfig = loadConfig();
+            setTimeout(()=>{
+                submitScore(userConfig.difficulty, this.spentTime);
+            }, 500);
         }
         clearTimeout(this.timer);
     }
