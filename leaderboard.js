@@ -28,7 +28,7 @@ export function updateLeaderboard(level) {
     topScores.forEach((score, index) => {
         const listItem = document.createElement("li");
         listItem.textContent = `${index + 1}. ${score.name} - ${score.time}`;
-        beginnerLeaderboard.appendChild(listItem);
+        leaderboard[level].appendChild(listItem);
     });
 }
 
