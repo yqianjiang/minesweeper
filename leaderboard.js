@@ -27,7 +27,7 @@ export function updateLeaderboard(level) {
 
     topScores.forEach((score, index) => {
         const listItem = document.createElement("li");
-        listItem.textContent = `${index + 1}. ${score.name} - ${score.time}`;
+        listItem.textContent = `${index + 1}. ${score.name} - ${score.time}秒 - ${score.date||"2023/10/22前"}`;
         leaderboard[level].appendChild(listItem);
     });
 }
@@ -44,7 +44,8 @@ export function submitScore(level, playerTime) {
             return;  // 用户不想输入名字
         }
         // 将新成绩添加到初级英雄榜
-        topScores.push({ name: playerName, time: playerTime });
+        const day = new Date();
+        topScores.push({ name: playerName, time: playerTime, date: day.toLocaleDateString()});
     
         // 保存数据到localStorage
         localStorage.setItem(`${level}-scores`, JSON.stringify(topScores));

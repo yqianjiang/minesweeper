@@ -77,7 +77,11 @@ button {
 
 .game-intros {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 /* 游戏规则和操作说明样式 */
@@ -109,6 +113,15 @@ ol li {
 .leaderboard li {
     font-size: 1rem;
     margin: 5px;
+}
+
+a {
+    text-decoration: none;
+    color: #0073e6;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 @media screen and (max-width: 480px) {
