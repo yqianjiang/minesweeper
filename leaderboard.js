@@ -1,3 +1,5 @@
+import { showModal } from "./components/prompt.js";
+
 // 获取按钮和英雄榜元素
 const beginnerLeaderboard = document.getElementById("beginner-leaderboard");
 const intermediateLeaderboard = document.getElementById("intermediate-leaderboard");
@@ -37,20 +39,21 @@ export function submitScore(level, playerTime) {
     const scores = JSON.parse(localStorage.getItem(`${level}-scores`)) || [];
     const topScores = scores.slice(0, 5);
     if (topScores.length<5 || playerTime<topScores.slice(-1)[0].time) {
-        const playerName = prompt("新记录！请在英雄榜留下你的名字（可选）");
-        if (!playerName) {
-            return;  // 用户不想输入名字
-        }
-        // 将新成绩添加到初级英雄榜
-        const day = new Date();
-        const curr = { name: playerName, time: playerTime, date: day.toLocaleDateString()};
-        const idx = searchInsert(topScores, playerTime);
-    
-        // 保存数据到localStorage
-        localStorage.setItem(`${level}-scores`, JSON.stringify([...topScores.slice(0, idx), curr, ...topScores.slice(idx)]));
-    
-        // 更新初级英雄榜
-        updateLeaderboard(level);
+        showModal("新记录！","请在英雄榜留下你的名字（可选）", (playerName) => {
+            if (!playerName) {
+                return;  // 用户不想输入名字
+            }
+            // 将新成绩添加到初级英雄榜
+            const day = new Date();
+            const curr = { name: playerName, time: playerTime, date: day.toLocaleDateString()};
+            const idx = searchInsert(topScores, playerTime);
+        
+            // 保存数据到localStorage
+            localStorage.setItem(`${level}-scores`, JSON.stringify([...topScores.slice(0, idx), curr, ...topScores.slice(idx)]));
+        
+            // 更新初级英雄榜
+            updateLeaderboard(level);
+        });
     }
 }
 
