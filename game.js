@@ -50,6 +50,8 @@ export class MineSweeper {
         this.state = "unpressed";
         this.timer = null;
         this.isAutoFlag = userConfig.autoFlag;
+        this.isFirstBlank = userConfig.firstBlank;
+        this.isFirstSafe = userConfig.firstSafe;
     }
 
     setSize(size, numMine) {
@@ -67,7 +69,7 @@ export class MineSweeper {
         this.timer = null;
     }
 
-    initBoard() {
+    initBoard(click) {
         const [w, h] = this.size;
         let n = this.numMine;
         // h: 高=行数
@@ -76,12 +78,28 @@ export class MineSweeper {
         if (n <= 0) return "数据不合法！至少要有一颗地雷！"
         if (n >= w * h) return "数据不合法！雷的数量不能超过格子数量！"
         // 随机放置n个雷
-        // 方法一：计算每个格子放雷的概率 => 遍历board，每个格子都判断一下是否要放雷，放了就减少雷的数量，直到雷的数量用完。O(w*h) --适合雷比较密集的情况
-        // 方法二：随机抽样一个坐标，如果是E，可以改成M，否则抽样下一个坐标，直到放完雷的数量。O(n) --适合雷比较稀疏的情况
+        // 随机抽样一个坐标，如果是E，可以改成M，否则抽样下一个坐标，直到放完雷的数量。最佳O(n) --适合雷比较稀疏的情况
+        // Initialize a set to keep track of positions to avoid for mines
+        const avoidPositions = new Set();
+        
+        // Add the initial click and its neighbors to the set
+        if (click) {
+            avoidPositions.add(`${click[0]}_${click[1]}`);
+            const maxE = w * h - n;
+            for (const [dx, dy] of neibour) {
+                const r = click[0] + dx;
+                const c = click[1] + dy;
+                if (r >= 0 && r < w && c >= 0 && c < h && avoidPositions.size < maxE) {
+                    avoidPositions.add(`${r}_${c}`);
+                }
+            }
+        }
+
         while (n) {
             const r = randInt(0, w - 1);
             const c = randInt(0, h - 1);
-            if (board[r][c] === "E") {
+            const position = `${r}_${c}`;
+            if (board[r][c] === "E" && !avoidPositions.has(position)) {
                 board[r][c] = "M";
                 n--;
             }
@@ -96,12 +114,47 @@ export class MineSweeper {
         }, 1000)
     }
 
+    findNewMineLocation(x, y) {
+        const directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]; // Up, Left, Down, Right
+        for (const [dx, dy] of directions) {
+            const newX = x + dx;
+            const newY = y + dy;
+            if (this.isInsideBoard(newX, newY) && this.board[newX][newY] === "E") {
+                return [newX, newY];
+            }
+        }
+        // If no empty cell found in the adjacent positions, search for an empty cell in the entire board.
+        for (let i = 0; i < this.board.length; i++) {
+            for (let j = 0; j < this.board[i].length; j++) {
+                if (this.board[i][j] === "E") {
+                    return [i, j];
+                }
+            }
+        }
+        // If no empty cell is found anywhere, you should handle this case according to your game rules.
+    }
+    
+    isInsideBoard(x, y) {
+        return x >= 0 && x < this.board.length && y >= 0 && y < this.board[0].length;
+    }
+    
     updateBoard(click, timerCallback) {
+        const [x, y] = click;
         if (!this.timer) {
+            if (this.isFirstBlank) {
+                // 保证第一个点击为空白
+                this.board = this.initBoard(click);
+            } else if (this.isFirstSafe) {
+                // 保证第一个点击不踩雷：如果初次点击刚好是地雷，地雷会消失而转移到左上角，如果左上角原来就有地雷，则会移到邻近的方块（优先级：左to右，上to下）
+                if (this.board[x][y] === "M") {
+                    const [newX, newY] = this.findNewMineLocation(x, y);
+                    this.board[x][y] = "E"; // Set the current cell to empty ("E")
+                    this.board[newX][newY] = "M"; // Place the mine in a new location
+                }
+            }
             this.startTiming(timerCallback);
         }
         // 检查玩家点击：点击了E或M
-        const [x, y] = click;
         const curr = this.board[x][y];
         // 如果curr==="M"，踩了地雷，改成X，游戏结束
         if (curr === "M") {
@@ -211,7 +264,6 @@ export class MineSweeper {
             }
         }
     }
-
 
     handleLose() {
         this.state = "lose";

@@ -20,6 +20,8 @@ export const levels = {
 const defaultConfig = {
   difficulty: "BEGINNER",
   autoFlag: true,
+  firstBlank: true,
+  firstSafe: true,
   level: levels["BEGINNER"],
 };
 
