@@ -116,7 +116,7 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
         event.stopPropagation();
         const [x, y] = _getGridIndex(event.clientX - x0, event.clientY - y0);
         if (x >= 0 && x < game.size[0] && y >= 0 && y < game.size[1]) {
-            game.revealRemainingE(x, y);
+            game.revealAdjacentTiles(x, y);
             // TODO: 如果没有解开棋盘，就闪烁一下
 
             // 重新绘制棋盘
@@ -154,26 +154,24 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
     const beginnerBtn = document.querySelector('#beginner-btn');
     const intermediateBtn = document.querySelector('#intermediate-btn');
     const expertBtn = document.querySelector('#expert-btn');
-    // const customBtn = document.querySelector('#custom-btn');
+    const customBtn = document.querySelector('#custom-btn');
     function setLevel(level, customPars) {
         menuPopupGame.style.visibility = "hidden";
+
+        // 更新用户配置
         updateUserConfig("difficulty", level);
         const pars = customPars || levels[level];
         updateUserConfig("level", pars);
+
         // 清除之前的eventListener
-        canvas.removeEventListener("mousedown", handleClickBoard);
-        canvas.removeEventListener("dblclick", handleDoubleClick);
-        menuBtnGame.removeEventListener("click", handleToggleMemu);
-        beginnerBtn.removeEventListener("click", setLevelBeginner);
-        intermediateBtn.removeEventListener("click", setLevelIntermediate);
-        expertBtn.removeEventListener("click", setLevelExpert);
-        autoFlagBtn.removeEventListener("click", handleToggleAutoFlag);
+        removeAllEventListeners();
 
         // 停止游戏
         game.restart();
 
         // 清空 canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         render(ctx, canvas, pars);
     }
     function setLevelBeginner() {
@@ -193,7 +191,18 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
     beginnerBtn.addEventListener("click", setLevelBeginner)
     intermediateBtn.addEventListener("click", setLevelIntermediate)
     expertBtn.addEventListener("click", setLevelExpert)
-    // customBtn.addEventListener("click", showCustomPopup)
+    customBtn?.addEventListener?.("click", showCustomPopup)
+
+    function removeAllEventListeners() {
+        canvas.removeEventListener("mousedown", handleClickBoard);
+        canvas.removeEventListener("dblclick", handleDoubleClick);
+        menuBtnGame.removeEventListener("click", handleToggleMemu);
+        beginnerBtn.removeEventListener("click", setLevelBeginner);
+        intermediateBtn.removeEventListener("click", setLevelIntermediate);
+        expertBtn.removeEventListener("click", setLevelExpert);
+        customBtn?.removeEventListener?.("click", showCustomPopup);
+        autoFlagBtn.removeEventListener("click", handleToggleAutoFlag);
+    }
 }
 
 function setAutoFlagText(isAutoFlag, autoFlagBtn, gameTipsField) {

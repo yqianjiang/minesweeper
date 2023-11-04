@@ -12,11 +12,11 @@ import { submitScore } from './leaderboard.js';
  * 数字（'1' 到 '8'）表示有多少地雷与这块 已挖出的 方块相邻，
  * 'X' 则表示一个 已挖出的 地雷。
  */
-const neibour = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+const neighbors = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
 
-function revealBoard(board, x, y) {
+function revealTiles(board, x, y) {
     let count = 0;
-    for (const [dx, dy] of neibour) {
+    for (const [dx, dy] of neighbors) {
         if (["M", "M*", "M?", "X", "X*"].includes(board[x + dx]?.[y + dy])) { // 所有是雷的格子，不管玩家标了什么
             count++;
         }
@@ -26,10 +26,10 @@ function revealBoard(board, x, y) {
     } else {
         // 当前格子为B，计算附近九宫格
         board[x][y] = "B";
-        for (const [dx, dy] of neibour) {
+        for (const [dx, dy] of neighbors) {
             if (["E", "E?"].includes(board[x + dx]?.[y + dy])) {  // TODO: 检查这里E*是否可以揭开？
                 // 递归地揭露
-                revealBoard(board, x + dx, y + dy);
+                revealTiles(board, x + dx, y + dy);
             }
         }
     }
@@ -45,7 +45,7 @@ export class MineSweeper {
         this.size = size;
         this.numMine = numMine;
         this.numMineCurr = numMine;
-        this.board = this.initBoard();
+        this.board = this.generateBoard();
         this.spentTime = 0;
         this.state = "unpressed";
         this.timer = null;
@@ -62,14 +62,14 @@ export class MineSweeper {
 
     restart() {
         this.numMineCurr = this.numMine;
-        this.board = this.initBoard();
+        this.board = this.generateBoard();
         this.spentTime = 0;
         this.state = "unpressed";
         clearTimeout(this.timer);
         this.timer = null;
     }
 
-    initBoard(click) {
+    generateBoard(click) {
         const [w, h] = this.size;
         let n = this.numMine;
         // h: 高=行数
@@ -86,7 +86,7 @@ export class MineSweeper {
         if (click) {
             avoidPositions.add(`${click[0]}_${click[1]}`);
             const maxE = w * h - n;
-            for (const [dx, dy] of neibour) {
+            for (const [dx, dy] of neighbors) {
                 const r = click[0] + dx;
                 const c = click[1] + dy;
                 if (r >= 0 && r < w && c >= 0 && c < h && avoidPositions.size < maxE) {
@@ -143,7 +143,7 @@ export class MineSweeper {
         if (!this.timer) {
             if (this.isFirstBlank) {
                 // 保证第一个点击为空白
-                this.board = this.initBoard(click);
+                this.board = this.generateBoard(click);
             } else if (this.isFirstSafe) {
                 // 保证第一个点击不踩雷：如果初次点击刚好是地雷，地雷会消失而转移到左上角，如果左上角原来就有地雷，则会移到邻近的方块（优先级：左to右，上to下）
                 if (this.board[x][y] === "M") {
@@ -164,7 +164,7 @@ export class MineSweeper {
         }
         // 点击E，需要计算E附近有多少颗雷
         if (curr === "E") {
-            revealBoard(this.board, x, y);
+            revealTiles(this.board, x, y);
         }
         this.autoFlag();
         // 检查游戏是否胜利
@@ -190,7 +190,7 @@ export class MineSweeper {
                 if (val) {
                     const candidates = [];
                     let count = 0;  // 记录已知的雷 和 未知的格子
-                    for (const [dx, dy] of neibour) {
+                    for (const [dx, dy] of neighbors) {
                         const val2 = this.board[+x + dx]?.[+y + dy];
                         if (["M", "E", "M?", "E?"].includes(val2)) {
                             candidates.push([dx, dy]);
@@ -238,14 +238,14 @@ export class MineSweeper {
         // }
     }
 
-    revealRemainingE(x, y) {
+    revealAdjacentTiles(x, y) {
         // 检查是否是数字格子
         const number = parseInt(this.board[x][y]);
         if (number) {
             // 检查周围标记的雷的数量是否等于数字
             let count = 0;
             const toReveal = [];
-            for (const [dx, dy] of neibour) {
+            for (const [dx, dy] of neighbors) {
                 const val2 = this.board[x + dx]?.[y + dy];
                 if (["M*", "E*", "X", "X*"].includes(val2)) {  // 玩家标记的雷或者已知的雷
                     count++;
