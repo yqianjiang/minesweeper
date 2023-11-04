@@ -1,80 +1,74 @@
 // 通用弹窗
-const createModal = (title, content, { onSubmit, onBeforeClose, customId }) => {
-    if (!customId) {
-        // 生成一个随机的 customId，可以根据需要进行更复杂的生成
-        customId = Math.random().toString(36).substring(7);
+const modals = {};
+const createModal = (title, content, { onSubmit, onBeforeClose, modalId }) => {
+    if (!modalId) {
+        // 生成一个随机的 modalId
+        modalId = Math.random().toString(36).substring(7);
     }
-    let customModal = document.querySelector(`#customModal_${customId}`);
 
-    if (!customModal) {
-        customModal = document.createElement("div");
-        customModal.className = "modal";
-        customModal.id = `customModal_${customId}`;
+    let modal = modals[modalId];
+
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.className = "modal";
+        modal.id = `customModal_${modalId}`;
 
         // 创建弹窗内容
-        const modalContent = document.createElement("div");
-        modalContent.className = "modal-content";
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 class="modal-title">${title}</h2>
+                ${typeof content === 'string' ? `<p>${content}</p>` : content.outerHTML}
+                ${onSubmit ? '<button id="submitBtn">提交</button>' : ''}
+            </div>
+        `;
 
-        // 创建关闭按钮
-        const closeModalBtn = document.createElement("span");
-        closeModalBtn.className = "close";
-        closeModalBtn.innerHTML = "&times;";
-        modalContent.appendChild(closeModalBtn);
-
-        // 创建标题
-        const h2 = document.createElement("h2");
-        h2.className = "modal-title";
-        h2.innerHTML = title;
-        modalContent.appendChild(h2);
-
-        // 创建内容
-        if (typeof content === 'string') {
-            const contentElement = document.createElement("p");
-            contentElement.innerHTML = content;
-            modalContent.appendChild(contentElement);
-        } else if (content instanceof Element) {
-            modalContent.appendChild(content);
-        }
-
-        // 创建提交按钮
-        if (onSubmit) {
-            const submitBtn = document.createElement("button");
-            submitBtn.innerHTML = "提交";
-            submitBtn.id = "submitBtn";
-            modalContent.appendChild(submitBtn);
-
-            submitBtn.addEventListener("click", () => {
-                onSubmit();
-                customModal.style.display = "none";
-            });
-        }
+        // 关闭按钮事件监听
+        const closeModalBtn = modal.querySelector(".close");
+        closeModalBtn.addEventListener("click", ()=>{
+            modal.style.display = "none";
+        });
 
         // 将内容添加到容器
-        customModal.appendChild(modalContent);
+        document.body.appendChild(modal);
 
-        // 添加弹窗到页面
-        document.body.appendChild(customModal);
-
-        // 添加事件处理程序
-        closeModalBtn.addEventListener("click", () => {
-            if (onBeforeClose) {
-                onBeforeClose();
-            }
-            customModal.style.display = "none";
-        });
+        modals[modalId] = modal;
     } else {
-        customModal.querySelector("h2").innerHTML = title;
+        modal.querySelector(".modal-title").innerHTML = title;
         // 更新内容
         if (typeof content === 'string') {
-            customModal.querySelector("p").innerHTML = content;
-        } else if (content instanceof Element) {
-            //
+            modal.querySelector("p").innerHTML = content;
         }
     }
 
-    customModal.style.display = "block";
-};
+    const setEvent = (element, callback, event) => {
+        if (modal[event]) {
+            element.removeEventListener("click", modal[event]);
+        }
 
+        if (callback) {
+            modal[event] = callback;
+            element.addEventListener("click", modal[event]);
+        }
+    };
+
+    // 更新onSubmit回调函数
+    if (onSubmit || modal.onSubmit) {
+        const submitBtn = modal.querySelector("#submitBtn");
+        setEvent(submitBtn, () => {
+            onSubmit();
+            modal.style.display = "none";
+        }, 'onSubmit');
+    }
+
+     // 更新onBeforeClose回调函数
+    if (onBeforeClose || modal.onBeforeClose) {
+        const closeModalBtn = modal.querySelector(".close");
+        setEvent(closeModalBtn, onBeforeClose, 'onBeforeClose');
+    }
+
+    modal.style.display = "block";
+};
 
 // 英雄榜留名弹窗
 const showModal = (title, msg, onSubmit) => {
@@ -97,11 +91,12 @@ const showModal = (title, msg, onSubmit) => {
     // 创建弹窗
     createModal(title, content, {
         onSubmit: () => {
+            const playerNameInput = document.getElementById("playerNameInput");
             const playerName = playerNameInput.value;
             onSubmit(playerName);
             // todo: 把输入的名字保存到local
         },
-        customId: "name"
+        modalId: "name",
     });
 };
 
@@ -199,7 +194,7 @@ const showCustomModal = (title, onSubmit) => {
 
             onSubmit(customPars);
         },
-        customId: "custom-"+userConfig.difficulty,
+        modalId: "custom-"+userConfig.difficulty,
     });
 };
 
@@ -208,7 +203,7 @@ const showWinModal = (time) => {
     const title = "恭喜🎉";
     const content = `你赢了！用时${time}秒`
     // 创建弹窗
-    createModal(title, content, {customId: 'win'});
+    createModal(title, content, {modalId: 'win'});
 };
 
 export { showModal, showWinModal, showCustomModal };
