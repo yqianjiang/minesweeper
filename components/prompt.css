@@ -31,16 +31,19 @@
     cursor: pointer;
 }
 
-input[type="text"] {
-    box-sizing: border-box;
-    width: 100%;
+input[type="text"], input[type="number"] {
     padding: 10px;
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-#submitNameBtn {
+#playerNameInput {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#submitBtn {
     padding: 10px 20px;
     background-color: #0073e6;
     color: white;
@@ -49,6 +52,6 @@ input[type="text"] {
     cursor: pointer;
 }
 
-#submitNameBtn:hover {
+#submitBtn:hover {
     background-color: #0059b3;
 }

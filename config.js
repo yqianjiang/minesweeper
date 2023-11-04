@@ -20,6 +20,7 @@ export const levels = {
 const defaultConfig = {
   difficulty: "BEGINNER",
   autoFlag: true,
+  level: levels["BEGINNER"],
 };
 
 // 从localStorage加载用户配置

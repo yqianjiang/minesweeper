@@ -1,4 +1,4 @@
-import { showModal } from "./components/prompt.js";
+import { showModal, showWinModal } from "./components/prompt.js";
 
 // 获取按钮和英雄榜元素
 const beginnerLeaderboard = document.getElementById("beginner-leaderboard");
@@ -35,11 +35,15 @@ export function updateLeaderboard(level) {
 // 处理提交成绩按钮点击事件
 export function submitScore(level, playerTime) {
     level = level.toLowerCase();
+    if (level === "custom") {
+        showWinModal(playerTime);
+        return;
+    }
     // 从localStorage中获取英雄榜数据（如果有的话）
     const scores = JSON.parse(localStorage.getItem(`${level}-scores`)) || [];
     const topScores = scores.slice(0, 5);
     if (topScores.length<5 || playerTime<topScores.slice(-1)[0].time) {
-        showModal("新记录！","请在英雄榜留下你的名字（可选）", (playerName) => {
+        showModal("新记录🎉",`请在英雄榜留下你的名字（可选）`, (playerName) => {
             if (!playerName) {
                 return;  // 用户不想输入名字
             }
@@ -54,6 +58,8 @@ export function submitScore(level, playerTime) {
             // 更新初级英雄榜
             updateLeaderboard(level);
         });
+    } else {
+        showWinModal(playerTime);
     }
 }
 

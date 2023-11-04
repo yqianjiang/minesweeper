@@ -4,13 +4,14 @@ import { renderDigit, loadDigitImages } from "./components/digit.js";
 import { renderFace, loadFaceImages, drawFaceBg } from "./components/face.js";
 import { renderBoard, loadBoardImages } from "./components/board.js";
 import { levels, loadConfig, updateUserConfig } from './config.js';
+import { showCustomModal } from "./components/prompt.js";
 
 function setup() {
     var canvas = document.getElementById("game");
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
         const userConfig = loadConfig();
-        render(ctx, canvas, levels[userConfig.difficulty]);
+        render(ctx, canvas, userConfig.level || levels[userConfig.difficulty]);
 
         // 根据userConfig更新文字提示
         const gameTipsField = document.querySelector('#game-tips');
@@ -153,9 +154,12 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
     const beginnerBtn = document.querySelector('#beginner-btn');
     const intermediateBtn = document.querySelector('#intermediate-btn');
     const expertBtn = document.querySelector('#expert-btn');
-    function setLevel(level) {
+    // const customBtn = document.querySelector('#custom-btn');
+    function setLevel(level, customPars) {
         menuPopupGame.style.visibility = "hidden";
         updateUserConfig("difficulty", level);
+        const pars = customPars || levels[level];
+        updateUserConfig("level", pars);
         // 清除之前的eventListener
         canvas.removeEventListener("mousedown", handleClickBoard);
         canvas.removeEventListener("dblclick", handleDoubleClick);
@@ -170,7 +174,7 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
 
         // 清空 canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        render(ctx, canvas, levels[level]);
+        render(ctx, canvas, pars);
     }
     function setLevelBeginner() {
         setLevel("BEGINNER");
@@ -181,9 +185,15 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
     function setLevelExpert() {
         setLevel("EXPERT");
     }
+    function showCustomPopup() {
+        showCustomModal("自定义", (pars) => {
+            setLevel("CUSTOM", pars);
+        });
+    }
     beginnerBtn.addEventListener("click", setLevelBeginner)
     intermediateBtn.addEventListener("click", setLevelIntermediate)
     expertBtn.addEventListener("click", setLevelExpert)
+    // customBtn.addEventListener("click", showCustomPopup)
 }
 
 function setAutoFlagText(isAutoFlag, autoFlagBtn, gameTipsField) {
