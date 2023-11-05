@@ -37,6 +37,17 @@ function render(ctx, level) {
     ctx.canvas.height = boardHeight + y0 * 2;
     ctx.canvas.width = boardWidth + x0 * 2;
 
+    // 设置css确保显示的大小
+    ctx.canvas.style.width = ctx.canvas.width + 'px';
+    ctx.canvas.style.height = ctx.canvas.height + 'px';
+
+    // 避免模糊
+    const scaleFactor = window.devicePixelRatio;
+    ctx.canvas.width = ctx.canvas.width * scaleFactor;
+    ctx.canvas.height = ctx.canvas.height * scaleFactor;
+    ctx.scale(scaleFactor, scaleFactor);
+
+
     // 画背景（不需要每帧更新的部分）
     const { digitPars: pars, onClickBtnGroups } = drawStaticBg(ctx, boardHeight, boardWidth, x0, y0);
 
@@ -75,15 +86,17 @@ function registerEvents(ctx, w, h, x0, y0, game, update, renderTime, facePars, o
     // 1: 插旗模式
 
     // 计算click到哪个格子
-    function _getGridIndex(x, y) {
+    function _getGridIndex(x, y, x0, y0) {
         // 获取点击位置相对于Canvas的坐标
         const rect = ctx.canvas.getBoundingClientRect();
+        
         x -= rect.left;
         y -= rect.top;
 
         // 计算点击的格子坐标
-        const columnIndex = Math.floor(x / w);
-        const rowIndex = Math.floor(y / h);
+        const scaleFactor = 1;
+        const columnIndex = Math.floor((x - x0 * scaleFactor) / (scaleFactor * w));
+        const rowIndex = Math.floor((y - y0 * scaleFactor) / (scaleFactor * h));
 
         return [rowIndex, columnIndex, x, y];
     }
@@ -91,7 +104,7 @@ function registerEvents(ctx, w, h, x0, y0, game, update, renderTime, facePars, o
     function handleClickBoard(event) {
         event.preventDefault();
         event.stopPropagation();
-        const [x, y, clickX, clickY] = _getGridIndex(event.clientX - x0, event.clientY - y0);
+        const [x, y, clickX, clickY] = _getGridIndex(event.clientX, event.clientY, x0, y0);
         if (x >= 0 && x < game.size[0] && y >= 0 && y < game.size[1]) {
             if (mode === 0) {
                 if (event.button === 2) { // 右键点击，标记
@@ -108,8 +121,8 @@ function registerEvents(ctx, w, h, x0, y0, game, update, renderTime, facePars, o
             update();
         } else {
             // 格子外，判断是否点击笑脸坐标;
-            const cx = clickX + x0;
-            const cy = clickY + y0;
+            const cx = clickX;
+            const cy = clickY;
             if (checkClickBtn([cx, cy], {...facePars, h: facePars.w})) {
                 game.restart();
                 update();
