@@ -27,12 +27,20 @@ export class BoxDrawer {
     
     drawTriLB(x, y, w, color) {
         this.ctx.fillStyle = color;
-        drawTriLB(this.ctx, x, y, w);
+        this.ctx.beginPath();
+        this.ctx.moveTo(x - w, y + w);
+        this.ctx.lineTo(x, y + w);
+        this.ctx.lineTo(x, y);
+        this.ctx.fill();
     }
     
     drawTriRT(x, y, w, color) {
         this.ctx.fillStyle = color;
-        drawTriRT(this.ctx, x, y, w);
+        this.ctx.beginPath();
+        this.ctx.moveTo(x + w, y - w);
+        this.ctx.lineTo(x + w, y);
+        this.ctx.lineTo(x, y);
+        this.ctx.fill();
     }
 
     drawLeft(w, color) {
@@ -85,22 +93,13 @@ export class BoxDrawer {
         w = w || this.sizes.BORDER_INNER + this.sizes.BORDER_MAIN;
         this.drawRect(this.x0 - w, this.y0 - w, this.contentWidth + w * 2, this.contentHeight + w * 2, this.styles.BG_COLOR_MAIN);
     }
-}
 
-// 左下角三角形
-function drawTriLB(ctx, x, y, w) {
-    ctx.beginPath();
-    ctx.moveTo(x - w, y + w);
-    ctx.lineTo(x, y + w);
-    ctx.lineTo(x, y);
-    ctx.fill();
-}
+    drawText(x, y, text, fontSize=16, color="#333") {
+        this.ctx.font = `${fontSize}px sans-serif`;
+        this.ctx.fillStyle = color;
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
+        this.ctx.fillText(text, x, y);
+    }
 
-// 右上角三角形
-function drawTriRT(ctx, x, y, w) {
-    ctx.beginPath();
-    ctx.moveTo(x + w, y - w);
-    ctx.lineTo(x + w, y);
-    ctx.lineTo(x, y);
-    ctx.fill();
 }

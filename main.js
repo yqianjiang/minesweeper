@@ -5,13 +5,14 @@ import { renderFace, loadFaceImages, drawFaceBg } from "./components/face.js";
 import { renderBoard, loadBoardImages } from "./components/board.js";
 import { levels, loadConfig, updateUserConfig } from './config.js';
 import { showCustomModal } from "./components/prompt.js";
+import { checkClickBtn } from "./utils.js"
 
 function setup() {
     var canvas = document.getElementById("game");
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
         const userConfig = loadConfig();
-        render(ctx, canvas, userConfig.level || levels[userConfig.difficulty]);
+        render(ctx, userConfig.level || levels[userConfig.difficulty]);
 
         // 根据userConfig更新文字提示
         const gameTipsField = document.querySelector('#game-tips');
@@ -23,7 +24,7 @@ function setup() {
 setup();
 
 // 根据data渲染游戏界面
-function render(ctx, canvas, level) {
+function render(ctx, level) {
     const game = new MineSweeper(level.size, level.n);
     const w = 30;
     const h = 30;
@@ -33,11 +34,11 @@ function render(ctx, canvas, level) {
     const boardHeight = game.size[0] * h;
     const boardWidth = game.size[1] * w;
     // 设置 canvas 的宽度和高度
-    canvas.height = boardHeight + y0 + x0;
-    canvas.width = boardWidth + x0 * 2;
+    ctx.canvas.height = boardHeight + y0 * 2;
+    ctx.canvas.width = boardWidth + x0 * 2;
 
     // 画背景（不需要每帧更新的部分）
-    const { digitPars: pars } = drawStaticBg(ctx, boardHeight, boardWidth, x0, y0);
+    const { digitPars: pars, onClickBtnGroups } = drawStaticBg(ctx, boardHeight, boardWidth, x0, y0);
 
     const facePars = {
         w: 36,
@@ -64,15 +65,19 @@ function render(ctx, canvas, level) {
         renderFace(ctx, game.state, faceImage, facePars);
     }
 
-    registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars, ctx);
+    registerEvents(ctx, w, h, x0, y0, game, update, renderTime, facePars, onClickBtnGroups);
 }
 
 // 注册事件监听
-function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars, ctx) {
+function registerEvents(ctx, w, h, x0, y0, game, update, renderTime, facePars, onClickBtnGroups) {
+    let mode = 0;
+    // 0: 挖开的模式
+    // 1: 插旗模式
+
     // 计算click到哪个格子
     function _getGridIndex(x, y) {
         // 获取点击位置相对于Canvas的坐标
-        const rect = canvas.getBoundingClientRect();
+        const rect = ctx.canvas.getBoundingClientRect();
         x -= rect.left;
         y -= rect.top;
 
@@ -88,11 +93,15 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
         event.stopPropagation();
         const [x, y, clickX, clickY] = _getGridIndex(event.clientX - x0, event.clientY - y0);
         if (x >= 0 && x < game.size[0] && y >= 0 && y < game.size[1]) {
-            if (event.button === 2) { // 右键点击，标记
+            if (mode === 0) {
+                if (event.button === 2) { // 右键点击，标记
+                    game.toggleFlag(x, y);
+                } else {
+                    // 左键点击，揭开
+                    game.updateBoard([x, y], renderTime);
+                }
+            } else { // 插旗模式
                 game.toggleFlag(x, y);
-            } else {
-                // 左键点击，揭开
-                game.updateBoard([x, y], renderTime);
             }
 
             // 重新绘制棋盘
@@ -101,9 +110,15 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
             // 格子外，判断是否点击笑脸坐标;
             const cx = clickX + x0;
             const cy = clickY + y0;
-            if (cx > facePars.x && cx < facePars.x + facePars.w && cy > facePars.y && cy < facePars.y + facePars.w) {
+            if (checkClickBtn([cx, cy], {...facePars, h: facePars.w})) {
                 game.restart();
                 update();
+            } else {
+                // 判断是否点击下方工具栏
+                const selectIdx = onClickBtnGroups(cx, cy);
+                if (selectIdx !== -1) {
+                    mode = selectIdx;
+                }
             }
         }
     };
@@ -121,9 +136,9 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
             update();
         }
     }
-    canvas.addEventListener("mousedown", handleClickBoard);
-    canvas.addEventListener("dblclick", handleDoubleClick);
-    canvas.addEventListener("contextmenu", (e) => {
+    ctx.canvas.addEventListener("mousedown", handleClickBoard);
+    ctx.canvas.addEventListener("dblclick", handleDoubleClick);
+    ctx.canvas.addEventListener("contextmenu", (e) => {
         e.preventDefault();
     });
 
@@ -168,9 +183,9 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
         game.restart();
 
         // 清空 canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        render(ctx, canvas, pars);
+        render(ctx, pars);
     }
     function setLevelBeginner() {
         setLevel("BEGINNER");
@@ -192,8 +207,8 @@ function registerEvents(canvas, w, h, x0, y0, game, update, renderTime, facePars
     customBtn?.addEventListener?.("click", showCustomPopup)
 
     function removeAllEventListeners() {
-        canvas.removeEventListener("mousedown", handleClickBoard);
-        canvas.removeEventListener("dblclick", handleDoubleClick);
+        ctx.canvas.removeEventListener("mousedown", handleClickBoard);
+        ctx.canvas.removeEventListener("dblclick", handleDoubleClick);
         menuBtnGame.removeEventListener("click", handleToggleMemu);
         beginnerBtn.removeEventListener("click", setLevelBeginner);
         intermediateBtn.removeEventListener("click", setLevelIntermediate);
