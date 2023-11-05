@@ -140,7 +140,7 @@ function registerEvents(ctx, w, h, x0, y0, game, update, renderTime, facePars, o
     function handleDoubleClick(event) {
         event.preventDefault();
         event.stopPropagation();
-        const [x, y] = _getGridIndex(event.clientX - x0, event.clientY - y0);
+        const [x, y] = _getGridIndex(event.clientX, event.clientY, x0, y0);
         if (x >= 0 && x < game.size[0] && y >= 0 && y < game.size[1]) {
             game.revealAdjacentTiles(x, y);
             // TODO: 如果没有解开棋盘，就闪烁一下
