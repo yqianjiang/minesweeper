@@ -1,5 +1,5 @@
 import { MineSweeper } from "./game.js";
-import { drawOuterBox } from "./draw.js";
+import { drawStaticBg } from "./draw.js";
 import { renderDigit, loadDigitImages } from "./components/digit.js";
 import { renderFace, loadFaceImages, drawFaceBg } from "./components/face.js";
 import { renderBoard, loadBoardImages } from "./components/board.js";
@@ -30,7 +30,6 @@ function render(ctx, canvas, level) {
     const x0 = 30;
     const y0 = 112;
 
-
     const boardHeight = game.size[0] * h;
     const boardWidth = game.size[1] * w;
     // 设置 canvas 的宽度和高度
@@ -38,14 +37,13 @@ function render(ctx, canvas, level) {
     canvas.width = boardWidth + x0 * 2;
 
     // 画背景（不需要每帧更新的部分）
-    const { digitPars: pars } = drawOuterBox(ctx, boardHeight, boardWidth, x0, y0);
+    const { digitPars: pars } = drawStaticBg(ctx, boardHeight, boardWidth, x0, y0);
 
     const facePars = {
         w: 36,
         x: x0 + boardWidth / 2 - 18,
         y: pars.y,
     }
-
 
     // 加载多个SVG图片
     const digitImages = loadDigitImages(update);
