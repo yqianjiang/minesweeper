@@ -1,5 +1,5 @@
 import { drawDigitBg } from "./components/digit.js"
-import { BoxDrawer, size, color } from "./components/box.js"
+import { BoxDrawer, defaultSizes as size, defaultStyles as color } from "./components/box.js"
 
 const H_TOOLBOX = 52;
 const OUTER_SIZE = size.BORDER_INNER * 2 + size.BORDER_MAIN;

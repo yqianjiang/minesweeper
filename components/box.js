@@ -1,96 +1,106 @@
-export const color = {
-    BG_COLOR_MAIN: "#BDBDBD",
+export const defaultStyles = {
     BORDER_COLOR_LIGHT: "#fff",
     BORDER_COLOR_DARK: "#7B7B7B",
-}
-export const size = {
+    BG_COLOR_MAIN: "#BDBDBD",
+};
+
+export const defaultSizes = {
     BORDER_INNER: 6,
     BORDER_MAIN: 18,
-}
+};
 
 export class BoxDrawer {
-    constructor(ctx, contentHeight, contentWidth, x0, y0) {
+    constructor(ctx, contentHeight, contentWidth, x0, y0, styles = defaultStyles, sizes = defaultSizes) {
         this.ctx = ctx;
         this.contentHeight = contentHeight;
         this.contentWidth = contentWidth;
         this.x0 = x0;
         this.y0 = y0;
+        this.styles = styles;
+        this.sizes = sizes;
     }
 
-    drawLeft(w) {
-        this.ctx.fillRect(this.x0 - w, this.y0 - w, w, this.contentHeight + w * 2); // 左边框
+    drawRect(x, y, width, height, color) {
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(x, y, width, height);
+    }
+    
+    drawTriLB(x, y, w, color) {
+        this.ctx.fillStyle = color;
+        drawTriLB(this.ctx, x, y, w);
+    }
+    
+    drawTriRT(x, y, w, color) {
+        this.ctx.fillStyle = color;
+        drawTriRT(this.ctx, x, y, w);
     }
 
-    drawRight(isTri, w) {
+    drawLeft(w, color) {
+        this.drawRect(this.x0 - w, this.y0 - w, w, this.contentHeight + w * 2, color);
+    }
+
+    drawRight(isTri, w, color) {
+        const x = this.x0 + this.contentWidth;
+        const y = this.y0;
         if (isTri) {
-            drawTriRT(this.ctx, [this.x0 + this.contentWidth, this.y0], w);
-            this.ctx.fillRect(this.x0 + this.contentWidth, this.y0, w, this.contentHeight + w);  // 右边框
+            this.drawTriRT(x, y, w, color);
+            this.drawRect(x, y, w, this.contentHeight + w, color);
         } else {
-            this.ctx.fillRect(this.x0 + this.contentWidth, this.y0 - w, w, this.contentHeight + w * 2);  // 右边框
+            this.drawRect(x, y - w, w, this.contentHeight + w * 2, color);
         }
     }
 
-    drawTop(w) {
-        this.ctx.fillRect(this.x0 - w, this.y0 - w, this.contentWidth + w * 2, w);  // 上边框
+    drawTop(w, color) {
+        this.drawRect(this.x0 - w, this.y0 - w, this.contentWidth + w * 2, w, color);
     }
 
-    drawBottom(isTri, w) {
+    drawBottom(isTri, w, color) {
+        const x = this.x0;
+        const y = this.y0 + this.contentHeight;
         if (isTri) {
-            drawTriLB(this.ctx, [this.x0, this.y0 + this.contentHeight], w);
-            this.ctx.fillRect(this.x0, this.y0 + this.contentHeight, this.contentWidth, w);
+            this.drawTriLB(x, y, w, color);
+            this.drawRect(x, y, this.contentWidth, w, color);
         } else {
-            this.ctx.fillRect(this.x0, this.y0 + this.contentHeight, this.contentWidth, w);
+            this.drawRect(x, y, this.contentWidth, w, color);
         }
     }
 
-    drawInner() {
-        // 画内边框
-        let w = size.BORDER_INNER;
-        this.ctx.fillStyle = color.BORDER_COLOR_DARK;
-        this.drawTop(w);
-        this.drawLeft(w);
-        this.ctx.fillStyle = color.BORDER_COLOR_LIGHT;
-        this.drawBottom(true, w);
-        this.drawRight(true, w);
+    drawInner(w) {
+        w = w || this.sizes.BORDER_INNER;
+        this.drawTop(w, this.styles.BORDER_COLOR_DARK);
+        this.drawLeft(w, this.styles.BORDER_COLOR_DARK);
+        this.drawBottom(true, w, this.styles.BORDER_COLOR_LIGHT);
+        this.drawRight(true, w, this.styles.BORDER_COLOR_LIGHT);
     }
 
-    drawOuter() {
-        // 画外边框
-        let w = size.BORDER_INNER * 2 + size.BORDER_MAIN;
-        this.ctx.fillStyle = color.BORDER_COLOR_LIGHT;
-        this.drawLeft(w);
-        this.drawTop(w);
-        this.ctx.fillStyle = color.BORDER_COLOR_DARK;
-        this.drawRight(true, w);
-        this.drawBottom(true, w);
+    drawOuter(w) {
+        w = w || this.sizes.BORDER_INNER * 2 + this.sizes.BORDER_MAIN;
+        this.drawLeft(w, this.styles.BORDER_COLOR_LIGHT);
+        this.drawTop(w, this.styles.BORDER_COLOR_LIGHT);
+        this.drawRight(true, w, this.styles.BORDER_COLOR_DARK);
+        this.drawBottom(true, w, this.styles.BORDER_COLOR_DARK);
     }
 
-    drawMiddle() {
-        // 画中间部分
-        let w = size.BORDER_INNER + size.BORDER_MAIN;
-        this.ctx.fillStyle = color.BG_COLOR_MAIN;
-        this.drawLeft(w);
-        this.drawTop(w);
-        this.drawRight(false, w);
-        this.drawBottom(false, w);
+    drawMiddle(w) {
+        w = w || this.sizes.BORDER_INNER + this.sizes.BORDER_MAIN;
+        this.drawRect(this.x0 - w, this.y0 - w, this.contentWidth + w * 2, this.contentHeight + w * 2, this.styles.BG_COLOR_MAIN);
     }
 }
 
-
 // 左下角三角形
-function drawTriLB(ctx, [x, y], w) {
+function drawTriLB(ctx, x, y, w) {
     ctx.beginPath();
     ctx.moveTo(x - w, y + w);
     ctx.lineTo(x, y + w);
     ctx.lineTo(x, y);
     ctx.fill();
 }
+
 // 右上角三角形
-function drawTriRT(ctx, [x, y], w) {
+function drawTriRT(ctx, x, y, w) {
     ctx.beginPath();
     ctx.moveTo(x + w, y - w);
     ctx.lineTo(x + w, y);
     ctx.lineTo(x, y);
     ctx.fill();
 }
-
