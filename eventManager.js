@@ -99,18 +99,20 @@ export class EventManager {
         event.stopPropagation();
         const [x, y, clickX, clickY] = this._getGridIndex(event.clientX, event.clientY);
         if (x >= 0 && x < this.game.size[0] && y >= 0 && y < this.game.size[1]) {
-            if (this.mode === 0) {
-                if (event.button === 2) { // 右键点击，标记
+            if (this.game.state === "unpressed") {
+                if (this.mode === 0) {
+                    if (event.button === 2) { // 右键点击，标记
+                        this.game.toggleFlag(x, y);
+                    } else {
+                        // 左键点击，挖开
+                        this.game.updateBoard([x, y], this.renderTime);
+                    }
+                } else { // 插旗模式
                     this.game.toggleFlag(x, y);
-                } else {
-                    // 左键点击，挖开
-                    this.game.updateBoard([x, y], this.renderTime);
                 }
-            } else { // 插旗模式
-                this.game.toggleFlag(x, y);
+                // 重新绘制棋盘
+                this.update();
             }
-            // 重新绘制棋盘
-            this.update();
         } else {
             // 棋盘外，工具栏点击
             const cx = clickX;

@@ -67,6 +67,7 @@ export class MineSweeper {
         this.spentTime = 0;
         this.state = "unpressed";
         this.timer?.clear();
+        this.timer = null;
     }
 
     generateBoard(click) {
@@ -140,8 +141,11 @@ export class MineSweeper {
     }
     
     updateBoard(click, timerCallback) {
+        if (this.state != "unpressed") {
+            return;
+        }
         const [x, y] = click;
-        if (!this.timer || !this.timer.startTime) {
+        if (!this.timer) {
             if (this.isFirstBlank) {
                 // 保证第一个点击为空白
                 this.board = this.generateBoard(click);
@@ -269,6 +273,7 @@ export class MineSweeper {
     handleLose() {
         this.state = "lose";
         this.timer?.clear();
+        this.timer = null;
 
         // 显示所有的雷，用"X*"表示？
         for (const i in this.board) {
@@ -289,5 +294,6 @@ export class MineSweeper {
             }, 500);
         }
         this.timer?.clear();
+        this.timer = null;
     }
 }
