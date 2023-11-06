@@ -25,6 +25,8 @@ setup();
 
 // 根据data渲染游戏界面
 function render(ctx, level) {
+    ctx.fillStyle = "#BDBDBD";
+    ctx.fillRect(0, 0, 330, 494);
     const game = new MineSweeper(level.size, level.n);
     const w = 30;
     const h = 30;

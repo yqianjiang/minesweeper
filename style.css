@@ -21,11 +21,15 @@ body {
     margin: 24px auto 0;
 }
 
+#game {
+    background: "#BDBDBD";
+    touch-action: manipulation;
+}
+
 #game-tips {
     font-size: 12px;
     text-align: center;
     margin-bottom: 24px;
-    touch-action: manipulation;
 }
 
 .window-title-bar {

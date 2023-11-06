@@ -1,5 +1,6 @@
 import { loadConfig } from './config.js';
 import { submitScore } from './leaderboard.js';
+import { Timer } from './timer.js';
 /**
  * 未知的方块表示：
  * 'M' 代表一个 未挖出的 地雷，
@@ -65,8 +66,7 @@ export class MineSweeper {
         this.board = this.generateBoard();
         this.spentTime = 0;
         this.state = "unpressed";
-        clearTimeout(this.timer);
-        this.timer = null;
+        this.timer?.clear();
     }
 
     generateBoard(click) {
@@ -108,11 +108,12 @@ export class MineSweeper {
     }
 
     startTiming(callback) {
-        this.timer = setInterval(() => {
+        this.timer = new Timer(()=>{
             this.spentTime += 1;
             callback();
-        }, 1000)
-    }
+        })
+        this.timer.start();
+      }
 
     findNewMineLocation(x, y) {
         const directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]; // Up, Left, Down, Right
@@ -140,7 +141,7 @@ export class MineSweeper {
     
     updateBoard(click, timerCallback) {
         const [x, y] = click;
-        if (!this.timer) {
+        if (!this.timer || !this.timer.startTime) {
             if (this.isFirstBlank) {
                 // 保证第一个点击为空白
                 this.board = this.generateBoard(click);
@@ -267,7 +268,7 @@ export class MineSweeper {
 
     handleLose() {
         this.state = "lose";
-        clearTimeout(this.timer);
+        this.timer?.clear();
 
         // 显示所有的雷，用"X*"表示？
         for (const i in this.board) {
@@ -287,6 +288,6 @@ export class MineSweeper {
                 submitScore(userConfig.difficulty, this.spentTime);
             }, 500);
         }
-        clearTimeout(this.timer);
+        this.timer?.clear();
     }
 }
