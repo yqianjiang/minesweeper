@@ -1,5 +1,6 @@
 import { drawDigitBg } from "./components/digit.js"
-import { BoxDrawer, defaultSizes as size, defaultStyles as color } from "./components/box.js"
+import { BoxDrawer } from "./components/box.js"
+import { defaultSizes as size, defaultStyles as color } from "./config.js"
 import { checkClickBtn } from "./utils.js"
 
 const H_TOOLBOX = 52;

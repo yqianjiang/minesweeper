@@ -16,6 +16,17 @@ export const levels = {
   }
 }
 
+export const defaultStyles = {
+  BORDER_COLOR_LIGHT: "#fff",
+  BORDER_COLOR_DARK: "#7B7B7B",
+  BG_COLOR_MAIN: "#BDBDBD",
+};
+
+export const defaultSizes = {
+  BORDER_INNER: 6,
+  BORDER_MAIN: 18,
+};
+
 // 默认配置
 const defaultConfig = {
   difficulty: "BEGINNER",
