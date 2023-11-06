@@ -127,7 +127,7 @@ export class EventManager {
             } else {
                 // 按住的状态
                 this.pressing = true;
-                this.update({pressPosition: [x, y]});
+                this.update({pressPositions: [[x, y]]});
             }
         } else {
             // 棋盘外，工具栏点击
@@ -152,11 +152,19 @@ export class EventManager {
         event.stopPropagation();
         const [x, y] = this._getGridIndex(event.clientX, event.clientY);
         if (x >= 0 && x < this.game.size[0] && y >= 0 && y < this.game.size[1]) {
-            this.game.revealAdjacentTiles(x, y);
-            // TODO: 如果没有解开棋盘，就闪烁一下
+            const pressPositions = this.game.revealAdjacentTiles(x, y);
 
-            // 重新绘制棋盘
-            this.update();
+            if (pressPositions?.length) {
+                // 如果没有解开棋盘，就闪烁一下(todo: 应该是按下时类似按住，松手闪烁回来？)
+                this.update({pressPositions});
+                setTimeout(()=>{
+                    this.update();
+                }, 150);
+            } else {
+                // 重新绘制棋盘
+                this.update();
+            }
+
         }
     }
 

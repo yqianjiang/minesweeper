@@ -263,6 +263,8 @@ export class MineSweeper {
                 for (const [dx, dy] of toReveal) {
                     this.updateBoard([x + dx, y + dy]);
                 }
+            } else {
+                return toReveal.map(([dx,dy])=>[x + dx, y + dy]);
             }
         }
     }

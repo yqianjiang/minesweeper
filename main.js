@@ -70,10 +70,10 @@ export function render(ctx, level) {
         renderDigit(ctx, game.spentTime, digitImages, { ...pars, x: pars.xleft });
     }
 
-    function update({pressPosition}={}) {
+    function update({pressPositions}={}) {
         renderDigit(ctx, game.numMineCurr, digitImages, pars);
         renderTime();
-        renderBoard(ctx, game.board, w, h, svgImages, x0, y0, pressPosition);
+        renderBoard(ctx, game.board, w, h, svgImages, x0, y0, pressPositions);
         renderFace(ctx, game.state, faceImage, facePars);
     }
 
