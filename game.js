@@ -67,6 +67,7 @@ export class MineSweeper {
         this.spentTime = 0;
         this.state = "unpressed";
         this.timer?.clear();
+        this.timer = null;
     }
 
     generateBoard(click) {
@@ -141,7 +142,7 @@ export class MineSweeper {
     
     updateBoard(click, timerCallback) {
         const [x, y] = click;
-        if (!this.timer || !this.timer.startTime) {
+        if (!this.timer) {
             if (this.isFirstBlank) {
                 // 保证第一个点击为空白
                 this.board = this.generateBoard(click);
