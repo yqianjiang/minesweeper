@@ -14,18 +14,40 @@ const createModal = (title, content, { onSubmit, onBeforeClose, modalId }) => {
         modal.id = `customModal_${modalId}`;
 
         // 创建弹窗内容
-        modal.innerHTML = `
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2 class="modal-title">${title}</h2>
-                ${typeof content === 'string' ? `<p>${content}</p>` : content.outerHTML}
-                ${onSubmit ? '<button id="submitBtn">提交</button>' : ''}
-            </div>
-        `;
+        const modalContent = document.createElement('div');
+        modalContent.classList.add('modal-content');
+
+        const closeButton = document.createElement('span');
+        closeButton.classList.add('close');
+        closeButton.textContent = '×';
+        modalContent.appendChild(closeButton);
+
+        const titleElement = document.createElement('h2');
+        titleElement.classList.add('modal-title');
+        titleElement.textContent = title;
+        modalContent.appendChild(titleElement);
+
+        if (typeof content === 'string') {
+            const paragraph = document.createElement('p');
+            paragraph.textContent = content;
+            modalContent.appendChild(paragraph);
+        } else {
+            modalContent.appendChild(content);
+        }
+
+        if (onSubmit) {
+            const submitButton = document.createElement('button');
+            submitButton.id = 'submitBtn';
+            submitButton.textContent = '提交';
+            modalContent.appendChild(submitButton);
+        }
+
+        modal.appendChild(modalContent);
+
 
         // 关闭按钮事件监听
         const closeModalBtn = modal.querySelector(".close");
-        closeModalBtn.addEventListener("click", ()=>{
+        closeModalBtn.addEventListener("click", () => {
             modal.style.display = "none";
         });
 
@@ -34,10 +56,13 @@ const createModal = (title, content, { onSubmit, onBeforeClose, modalId }) => {
 
         modals[modalId] = modal;
     } else {
-        modal.querySelector(".modal-title").innerHTML = title;
+        const titleElemet = modal.querySelector(".modal-title");
+        titleElemet.innerHTML = title;
         // 更新内容
         if (typeof content === 'string') {
             modal.querySelector("p").innerHTML = content;
+        } else {
+            // 更新content
         }
     }
 
@@ -61,7 +86,7 @@ const createModal = (title, content, { onSubmit, onBeforeClose, modalId }) => {
         }, 'onSubmit');
     }
 
-     // 更新onBeforeClose回调函数
+    // 更新onBeforeClose回调函数
     if (onBeforeClose || modal.onBeforeClose) {
         const closeModalBtn = modal.querySelector(".close");
         setEvent(closeModalBtn, onBeforeClose, 'onBeforeClose');
@@ -91,7 +116,7 @@ const showModal = (title, msg, onSubmit) => {
     // 创建弹窗
     createModal(title, content, {
         onSubmit: () => {
-            const playerNameInput = document.getElementById("playerNameInput");
+            // const playerNameInput = document.getElementById("playerNameInput");
             const playerName = playerNameInput.value;
             onSubmit(playerName);
             // todo: 把输入的名字保存到local
@@ -173,6 +198,7 @@ const showCustomModal = (title, onSubmit) => {
     // 创建弹窗
     createModal(title, content, {
         onSubmit: () => {
+            // const [rowInput, colInput, minesInput] = ("input");
             const rows = parseInt(rowInput.value, 10);
             const cols = parseInt(colInput.value, 10);
             const mines = parseInt(minesInput.value, 10);
@@ -194,7 +220,7 @@ const showCustomModal = (title, onSubmit) => {
 
             onSubmit(customPars);
         },
-        modalId: "custom-"+userConfig.difficulty,
+        modalId: "custom-" + userConfig.difficulty,
     });
 };
 
@@ -203,7 +229,7 @@ const showWinModal = (time) => {
     const title = "恭喜🎉";
     const content = `你赢了！用时${time}秒`
     // 创建弹窗
-    createModal(title, content, {modalId: 'win'});
+    createModal(title, content, { modalId: 'win' });
 };
 
 export { showModal, showWinModal, showCustomModal };
