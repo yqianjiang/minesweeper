@@ -116,7 +116,7 @@ const showModal = (title, msg, onSubmit) => {
     // 创建弹窗
     createModal(title, content, {
         onSubmit: () => {
-            // const playerNameInput = document.getElementById("playerNameInput");
+            const playerNameInput = document.getElementById("playerNameInput");
             const playerName = playerNameInput.value;
             onSubmit(playerName);
             // todo: 把输入的名字保存到local
