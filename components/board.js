@@ -43,16 +43,28 @@ export function loadBoardImages(callback) {
 }
 
 // 渲染board
-export function renderBoard(ctx, board, w, h, svgImages, x, y) {
+export function renderBoard(ctx, board, w, h, svgImages, x, y, pressPosition) {
     // w, h为每个格子的宽高
     for (const i in board) {
         for (const j in board[i]) {
-            const cellValue = board[i][j];
+            let cellValue = board[i][j];
             const xPos = x + w * j;
             const yPos = y + h * i;
             if (cellValue in svgImages) {
                 // 根据值获取对应的SVG图像
                 const svgImage = svgImages[cellValue];
+                ctx.drawImage(svgImage, xPos, yPos, w, h);
+            }
+        }
+    }
+
+    if (pressPosition) {
+        const [i, j] = pressPosition;
+        if (["M", "E"].includes(board[i][j])) {
+            const xPos = x + w * j;
+            const yPos = y + h * i;
+            const svgImage = svgImages["B"];
+            if (svgImage) {
                 ctx.drawImage(svgImage, xPos, yPos, w, h);
             }
         }
