@@ -19,7 +19,9 @@ export function renderDigit(ctx, num, svgImages, { x, y, w, h, xgap }) {
 
     for (let i = 2; i >= 0; i--) {
         const svgImage = svgImages[str.pop() || 0];
-        ctx.drawImage(svgImage, x + i * (w + xgap), y, w, h);
+        if (svgImage) {
+            ctx.drawImage(svgImage, x + i * (w + xgap), y, w, h);
+        }
     }
 }
 

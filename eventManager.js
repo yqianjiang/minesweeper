@@ -17,6 +17,7 @@ export class EventManager {
         this.x0 = x0;
         this.y0 = y0;
         this.scaleFactor = 1;
+        this.pressing = false;
         this.mode = 0;
         // 0: 挖开的模式
         // 1: 插旗模式
@@ -56,7 +57,18 @@ export class EventManager {
     }
 
     addCanvasClickEvents() {
-        this.addEventListener("game", "mousedown", this.handleClickBoard.bind(this));
+        this.addEventListener("game", "mousedown", (event) => {
+            this.handleClickBoard(event, false);
+        });
+        this.addEventListener("game", "mousemove", (event) => {
+            if (this.pressing) {
+                this.handleClickBoard(event, false);
+            }
+        });
+        this.addEventListener("game", "mouseup", (event) => {
+            this.pressing = false;
+            this.handleClickBoard(event, true);
+        });
         this.addEventListener("game", "dblclick", this.handleDoubleClick.bind(this));
         this.addEventListener("game", "contextmenu", (e) => {
             e.preventDefault();
@@ -94,23 +106,29 @@ export class EventManager {
         const rowIndex = Math.floor((y - this.y0 * this.scaleFactor) / (this.scaleFactor * this.h));
         return [rowIndex, columnIndex, x, y];
     }
-    handleClickBoard(event) {
+    handleClickBoard(event, isMouseUp) {
         event.preventDefault();
         event.stopPropagation();
         const [x, y, clickX, clickY] = this._getGridIndex(event.clientX, event.clientY);
         if (x >= 0 && x < this.game.size[0] && y >= 0 && y < this.game.size[1]) {
-            if (this.mode === 0) {
-                if (event.button === 2) { // 右键点击，标记
+            if (isMouseUp) {
+                if (this.mode === 0) {
+                    if (event.button === 2) { // 右键点击，标记
+                        this.game.toggleFlag(x, y);
+                    } else {
+                        // 左键点击，挖开
+                        this.game.updateBoard([x, y], this.renderTime);
+                    }
+                } else { // 插旗模式
                     this.game.toggleFlag(x, y);
-                } else {
-                    // 左键点击，挖开
-                    this.game.updateBoard([x, y], this.renderTime);
                 }
-            } else { // 插旗模式
-                this.game.toggleFlag(x, y);
+                // 重新绘制棋盘
+                this.update();
+            } else {
+                // 按住的状态
+                this.pressing = true;
+                this.update({pressPosition: [x, y]});
             }
-            // 重新绘制棋盘
-            this.update();
         } else {
             // 棋盘外，工具栏点击
             const cx = clickX;
