@@ -15,6 +15,7 @@ const createModal = (title, content, { onSubmit, onBeforeClose, modalId }) => {
 
         // 创建弹窗内容
         const modalContent = document.createElement('div');
+        modalContent.classList.add('game-window');
         modalContent.classList.add('modal-content');
 
         const closeButton = document.createElement('span');
@@ -23,6 +24,7 @@ const createModal = (title, content, { onSubmit, onBeforeClose, modalId }) => {
         modalContent.appendChild(closeButton);
 
         const titleElement = document.createElement('h2');
+        titleElement.classList.add('window-title-bar');
         titleElement.classList.add('modal-title');
         titleElement.textContent = title;
         modalContent.appendChild(titleElement);
@@ -38,7 +40,7 @@ const createModal = (title, content, { onSubmit, onBeforeClose, modalId }) => {
         if (onSubmit) {
             const submitButton = document.createElement('button');
             submitButton.id = 'submitBtn';
-            submitButton.textContent = '提交';
+            submitButton.textContent = '确定';
             modalContent.appendChild(submitButton);
         }
 
@@ -226,7 +228,7 @@ const showCustomModal = (title, onSubmit) => {
 
 // 胜利弹窗
 const showWinModal = (time) => {
-    const title = "恭喜🎉";
+    const title = "恭喜";
     const content = `你赢了！用时${time}秒`
     // 创建弹窗
     createModal(title, content, { modalId: 'win' });

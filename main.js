@@ -24,7 +24,7 @@ setup();
 
 // 根据data渲染游戏界面
 export function render(ctx, level) {
-    ctx.fillStyle = "#BDBDBD";
+    ctx.fillStyle = "#C0C0C0";
     ctx.fillRect(0, 0, 330, 494);
     const game = new MineSweeper(level.size, level.n);
     const w = 30;
