@@ -7,7 +7,7 @@ export class EventManager {
     constructor(ctx, w, h, x0, y0, game, update, renderTime, facePars, onClickBtnGroups) {
         this.ctx = ctx;
         this.game = game;
-        this.update = update;
+        this.update = (...pars)=>requestAnimationFrame(()=>update(...pars));
         this.renderTime = renderTime;
         this.facePars = facePars;
         this.onClickBtnGroups = onClickBtnGroups;
@@ -58,18 +58,21 @@ export class EventManager {
 
     addCanvasClickEvents() {
         this.addEventListener("game", "mousedown", (event) => {
-            this.handleClickBoard(event, false);
+            this.handleClick(event, false);
         });
         this.addEventListener("game", "mousemove", (event) => {
             if (this.pressing) {
-                this.handleClickBoard(event, false);
+                this.handleClick(event, false);
             }
         });
         this.addEventListener("game", "mouseup", (event) => {
             this.pressing = false;
-            this.handleClickBoard(event, true);
+            this.handleClick(event, true);
         });
-        this.addEventListener("game", "dblclick", this.handleDoubleClick.bind(this));
+        // this.addEventListener("game", "dblclick", (event)=>{
+        //     this.pressing = false;
+        //     this.handleClick(event, true, true);
+        // });
         this.addEventListener("game", "contextmenu", (e) => {
             e.preventDefault();
         });
@@ -106,37 +109,56 @@ export class EventManager {
         const rowIndex = Math.floor((y - this.y0 * this.scaleFactor) / (this.scaleFactor * this.h));
         return [rowIndex, columnIndex, x, y];
     }
-    handleClickBoard(event, isMouseUp) {
+    _restartGame() {
+        this.game.restart();
+        this.update();
+    }
+    _handleClickBoard(event, x, y, isMouseUp) {
+        if (this.mode === 1 || event.button === 2) {  // 右键或插旗模式，标记
+            if (!isMouseUp) {
+                this.game.toggleFlag(x, y);
+            }
+        } else {  // mode===0且左键点击，挖开
+            if (isMouseUp) {
+                if (this.game.isNumTile(x, y)) {
+                    this.game.revealAdjacentTiles(x, y);  // 双击
+                } else {
+                    this.game.updateBoard([x, y], this.renderTime);
+                }
+            } else {
+                // 按住的状态
+                this._handlePressBoard(x, y);
+                return; // 避免重新绘制棋盘
+            }
+        }
+        // 重新绘制棋盘
+        this.update();
+    }
+    _handlePressBoard(x, y) {
+        this.pressing = true;  // todo: 节流？
+        // console.log('pressing', x, y);
+        if (this.game.isNumTile(x, y)) {   // 双击
+            const pressPositions = this.game.getAdjacentTiles(x, y);
+            if (pressPositions.length) {
+                this.update({ pressPositions });
+            }
+        } else {
+            this.update({ pressPositions: [[x, y]] });
+        }
+    }
+    handleClick(event, isMouseUp, dbClick) {
         event.preventDefault();
         event.stopPropagation();
         const [x, y, clickX, clickY] = this._getGridIndex(event.clientX, event.clientY);
         if (x >= 0 && x < this.game.size[0] && y >= 0 && y < this.game.size[1]) {
-            if (isMouseUp) {
-                if (this.mode === 0) {
-                    if (event.button === 2) { // 右键点击，标记
-                        this.game.toggleFlag(x, y);
-                    } else {
-                        // 左键点击，挖开
-                        this.game.updateBoard([x, y], this.renderTime);
-                    }
-                } else { // 插旗模式
-                    this.game.toggleFlag(x, y);
-                }
-                // 重新绘制棋盘
-                this.update();
-            } else {
-                // 按住的状态
-                this.pressing = true;
-                this.update({pressPositions: [[x, y]]});
-            }
+            this._handleClickBoard(event, x, y, isMouseUp);
         } else {
             // 棋盘外，工具栏点击
             const cx = clickX;
             const cy = clickY;
             if (checkClickBtn([cx, cy], { ...this.facePars, h: this.facePars.w })) {
                 // 笑脸
-                this.game.restart();
-                this.update();
+                this._restartGame();
             } else {
                 // 下方工具栏
                 const selectIdx = this.onClickBtnGroups(cx, cy);
@@ -144,27 +166,6 @@ export class EventManager {
                     this.mode = selectIdx;
                 }
             }
-        }
-    }
-
-    handleDoubleClick(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        const [x, y] = this._getGridIndex(event.clientX, event.clientY);
-        if (x >= 0 && x < this.game.size[0] && y >= 0 && y < this.game.size[1]) {
-            const pressPositions = this.game.revealAdjacentTiles(x, y);
-
-            if (pressPositions?.length) {
-                // 如果没有解开棋盘，就闪烁一下(todo: 应该是按下时类似按住，松手闪烁回来？)
-                this.update({pressPositions});
-                setTimeout(()=>{
-                    this.update();
-                }, 150);
-            } else {
-                // 重新绘制棋盘
-                this.update();
-            }
-
         }
     }
 
@@ -189,16 +190,7 @@ export class EventManager {
         }
     }
 
-    setLevel(level, customPars) {
-        if (this.menuPopupGame) {
-            this.menuPopupGame.style.visibility = "hidden";
-        }
-
-        // 更新用户配置
-        updateUserConfig("difficulty", level);
-        const pars = customPars || levels[level];
-        updateUserConfig("level", pars);
-
+    _reRender(pars) {
         // 清除之前的eventListener
         this.removeAllEventListeners();
 
@@ -209,6 +201,18 @@ export class EventManager {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
         render(this.ctx, pars);
+    }
+    setLevel(level, customPars) {
+        if (this.menuPopupGame) {
+            this.menuPopupGame.style.visibility = "hidden";
+        }
+
+        // 更新用户配置
+        updateUserConfig("difficulty", level);
+        const pars = customPars || levels[level];
+        updateUserConfig("level", pars);
+
+        this._reRender(pars);
     }
 }
 

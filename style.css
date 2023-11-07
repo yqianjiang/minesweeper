@@ -40,7 +40,6 @@ body {
 
 .window-title-bar {
     font-size: 14px;
-    /* background-color: var(--main-blue); */
     color: #fff;
     padding: 8px 12px 4px;
     margin: 0;
@@ -54,7 +53,8 @@ body {
 .menu {
     padding: 2px 6px;
     position: relative;
-    background-color: #F1F2ED;
+    border-bottom: 1px solid #D4D1CA;
+    background: var(--bg-gray-light);
 }
 
 button {
@@ -90,6 +90,7 @@ button {
     padding: 6px 16px;
 }
 
+/* .menu>button:hover, */
 .menu-popup>button:hover {
     color: #fff;
     background-color: #3368C4;

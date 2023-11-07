@@ -158,6 +158,11 @@ export class MineSweeper {
         }
         // 检查玩家点击：点击了E或M
         const curr = this.board[x][y];
+        // flag的位置不能点：
+        if (curr === "E*" || curr === "M*") {
+            return;
+        }
+
         // 如果curr==="M"，踩了地雷，改成X，游戏结束
         if (curr === "M") {
             this.board[x][y] = "X";
@@ -238,6 +243,14 @@ export class MineSweeper {
         // } else if (val === "E?") {
         //     this.board[x][y] = "E";
         // }
+    }
+
+    isNumTile(x, y) {
+        return !!parseInt(this.board[x][y]);
+    }
+
+    getAdjacentTiles(x, y) {
+        return neighbors.map(([dx, dy])=>[x+dx, y+dy]).filter(([x, y])=>this.isInsideBoard(x, y));
     }
 
     revealAdjacentTiles(x, y) {
