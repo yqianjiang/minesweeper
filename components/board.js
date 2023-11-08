@@ -43,7 +43,7 @@ export function loadBoardImages(callback) {
 }
 
 // 渲染board
-export function renderBoard(ctx, board, w, h, svgImages, x, y, pressPosition) {
+export function renderBoard(ctx, board, w, h, svgImages, x, y, pressPositions) {
     // w, h为每个格子的宽高
     for (const i in board) {
         for (const j in board[i]) {
@@ -58,7 +58,8 @@ export function renderBoard(ctx, board, w, h, svgImages, x, y, pressPosition) {
         }
     }
 
-    if (pressPosition) {
+    if (!pressPositions) return;
+    for (const pressPosition of pressPositions) {
         const [i, j] = pressPosition;
         if (["M", "E"].includes(board[i][j])) {
             const xPos = x + w * j;

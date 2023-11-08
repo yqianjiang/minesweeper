@@ -10,10 +10,11 @@ function setup() {
     var canvas = document.getElementById("game");
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
-        const userConfig = loadConfig();
-        render(ctx, userConfig.level || levels[userConfig.difficulty]);
+        
+        render(ctx);
 
         // 根据userConfig更新文字提示
+        const userConfig = loadConfig();
         const gameTipsField = document.querySelector('#game-tips');
         const autoFlagBtn = document.querySelector('#autoflag-btn');
         setAutoFlagText(userConfig.autoFlag, autoFlagBtn, gameTipsField);
@@ -24,7 +25,9 @@ setup();
 
 // 根据data渲染游戏界面
 export function render(ctx, level) {
-    ctx.fillStyle = "#BDBDBD";
+    const userConfig = loadConfig();
+    level = level || userConfig.level || levels[userConfig.difficulty];
+    ctx.fillStyle = "#C0C0C0";
     ctx.fillRect(0, 0, 330, 494);
     const game = new MineSweeper(level.size, level.n);
     const w = 30;
@@ -70,11 +73,13 @@ export function render(ctx, level) {
         renderDigit(ctx, game.spentTime, digitImages, { ...pars, x: pars.xleft });
     }
 
-    function update({pressPosition}={}) {
-        renderDigit(ctx, game.numMineCurr, digitImages, pars);
-        renderTime();
-        renderBoard(ctx, game.board, w, h, svgImages, x0, y0, pressPosition);
-        renderFace(ctx, game.state, faceImage, facePars);
+    function update({pressPositions}={}) {
+        if (!pressPositions) {
+            renderDigit(ctx, game.numMineCurr, digitImages, pars);
+            renderTime();
+            renderFace(ctx, game.state, faceImage, facePars);
+        }
+        renderBoard(ctx, game.board, w, h, svgImages, x0, y0, pressPositions);
     }
 
     // 注册事件监听(todo: 不在render new这个对象？而是提供方法更新参数？)

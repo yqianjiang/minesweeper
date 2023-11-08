@@ -43,7 +43,7 @@ export function submitScore(level, playerTime) {
     const scores = JSON.parse(localStorage.getItem(`${level}-scores`)) || [];
     const topScores = scores.slice(0, 5);
     if (topScores.length<5 || playerTime<topScores.slice(-1)[0].time) {
-        showModal("新记录🎉",`请在英雄榜留下你的名字（可选）`, (playerName) => {
+        showModal("新记录",`请在英雄榜留下你的名字（可选）`, (playerName) => {
             if (!playerName) {
                 return;  // 用户不想输入名字
             }

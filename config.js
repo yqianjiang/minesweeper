@@ -19,7 +19,7 @@ export const levels = {
 export const defaultStyles = {
   BORDER_COLOR_LIGHT: "#fff",
   BORDER_COLOR_DARK: "#7B7B7B",
-  BG_COLOR_MAIN: "#BDBDBD",
+  BG_COLOR_MAIN: "#C0C0C0",
 };
 
 export const defaultSizes = {
