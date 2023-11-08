@@ -51,10 +51,18 @@
 .modal-content input {
     padding: 4px 6px;
     margin: 8px 8px 0;
-    border: 1px solid gray;
+    border: 1px solid #05467F;
 }
 .modal-content input:focus {
     outline: 2px solid #AFC9ED;
+}
+.custom-input {
+    width: 50px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
 }
 
 #playerNameInput {
@@ -72,6 +80,6 @@
     background: #F3F2EE;
 }
 
-#submitBtn:hover {
+#submitBtn:hover, #submitBtn:focus {
     outline: 2px solid #AFC9ED;
 }

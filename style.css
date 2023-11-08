@@ -51,7 +51,6 @@ body {
 }
 
 .menu {
-    padding: 2px 6px;
     position: relative;
     border-bottom: 1px solid #D4D1CA;
     background: var(--bg-gray-light);
@@ -62,6 +61,10 @@ button {
     border: 0;
     color: #000;
     cursor: pointer;
+}
+
+.menu>button {
+    padding: 2px 8px;
 }
 
 .menu>button,
@@ -87,10 +90,10 @@ button {
 
 .menu-popup>button {
     text-align: left;
-    padding: 6px 16px;
+    padding: 2px;
 }
 
-/* .menu>button:hover, */
+.menu>button:hover,
 .menu-popup>button:hover {
     color: #fff;
     background-color: #3368C4;

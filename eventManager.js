@@ -85,19 +85,29 @@ export class EventManager {
             this.handleToggleAutoFlag(e.target, gameTipsField);
         });
         this.addEventListener("beginner-btn", "click", () => {
+            this._hideMenuPopup();
             this.setLevel("BEGINNER");
         })
         this.addEventListener("intermediate-btn", "click", () => {
+            this._hideMenuPopup();
             this.setLevel("INTERMEDIATE");
         })
         this.addEventListener("expert-btn", "click", () => {
+            this._hideMenuPopup();
             this.setLevel("EXPERT");
         })
         this.addEventListener("custom-btn", "click", () => {
-            showCustomModal("自定义", (pars) => {
+            this._hideMenuPopup();
+            showCustomModal("自定义雷区", (pars) => {
                 this.setLevel("CUSTOM", pars);
             });
         })
+    }
+
+    _hideMenuPopup() {
+        if (this.menuPopupGame) {
+            this.menuPopupGame.style.visibility = "hidden";
+        }
     }
 
     // 计算click到哪个格子
@@ -185,9 +195,7 @@ export class EventManager {
         updateUserConfig("autoFlag", this.game.isAutoFlag);
         setAutoFlagText(this.game.isAutoFlag, autoFlagBtn, gameTipsField);
         // 收起菜单
-        if (this.menuPopupGame) {
-            this.menuPopupGame.style.visibility = "hidden";
-        }
+        this._hideMenuPopup();
     }
 
     _reRender(pars) {
@@ -203,10 +211,6 @@ export class EventManager {
         render(this.ctx, pars);
     }
     setLevel(level, customPars) {
-        if (this.menuPopupGame) {
-            this.menuPopupGame.style.visibility = "hidden";
-        }
-
         // 更新用户配置
         updateUserConfig("difficulty", level);
         const pars = customPars || levels[level];
