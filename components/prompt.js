@@ -159,7 +159,7 @@ const showCustomModal = (title, onSubmit) => {
     colInput.id = "colInput";
     colInput.classList.add('custom-input');
     colInput.min = 8;
-    colInput.max = 24;
+    colInput.max = 30;
     
     const minesLabel = document.createElement("label");
     minesLabel.for = "minesInput";
