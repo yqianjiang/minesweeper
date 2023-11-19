@@ -15,13 +15,20 @@ import { Timer } from './timer.js';
  */
 const neighbors = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
 
-function revealTiles(board, x, y) {
+function countAdjacentMines(board, x, y) {
     let count = 0;
     for (const [dx, dy] of neighbors) {
-        if (["M", "M*", "M?", "X", "X*"].includes(board[x + dx]?.[y + dy])) { // 所有是雷的格子，不管玩家标了什么
+        const newX = x + dx;
+        const newY = y + dy;
+        if (board[newX] && board[newX][newY] && ["M", "M*", "M?", "X", "X*"].includes(board[newX][newY])) { // 所有是雷的格子，不管玩家标了什么
             count++;
         }
     }
+    return count;
+}
+
+function revealTiles(board, x, y) {
+    const count = countAdjacentMines(board, x, y);
     if (count > 0) {
         board[x][y] = count.toString();
     } else {
@@ -43,13 +50,7 @@ function randInt(lower, upper) {
 export class MineSweeper {
     constructor(size, numMine) {
         const userConfig = loadConfig();
-        this.size = size;
-        this.numMine = numMine;
-        this.numMineCurr = numMine;
-        this.board = this.generateBoard();
-        this.spentTime = 0;
-        this.state = "unpressed";
-        this.timer = null;
+        this.setSize(size, numMine);
         this.isAutoFlag = userConfig.autoFlag;
         this.isFirstBlank = userConfig.firstBlank;
         this.isFirstSafe = userConfig.firstSafe;
@@ -65,6 +66,10 @@ export class MineSweeper {
         this.numMineCurr = this.numMine;
         this.board = this.generateBoard();
         this.spentTime = 0;
+        this.clicks = {
+            active: 0,
+            wasted: 0
+        };
         this.state = "unpressed";
         this.timer?.clear();
         this.timer = null;
@@ -82,7 +87,7 @@ export class MineSweeper {
         // 随机抽样一个坐标，如果是E，可以改成M，否则抽样下一个坐标，直到放完雷的数量。最佳O(n) --适合雷比较稀疏的情况
         // Initialize a set to keep track of positions to avoid for mines
         const avoidPositions = new Set();
-        
+
         // Add the initial click and its neighbors to the set
         if (click) {
             avoidPositions.add(`${click[0]}_${click[1]}`);
@@ -109,12 +114,12 @@ export class MineSweeper {
     }
 
     startTiming(callback) {
-        this.timer = new Timer(()=>{
+        this.timer = new Timer(() => {
             this.spentTime += 1;
             callback();
         })
         this.timer.start();
-      }
+    }
 
     findNewMineLocation(x, y) {
         const directions = [[-1, 0], [0, -1], [1, 0], [0, 1]]; // Up, Left, Down, Right
@@ -135,11 +140,12 @@ export class MineSweeper {
         }
         // If no empty cell is found anywhere, you should handle this case according to your game rules.
     }
-    
+
     isInsideBoard(x, y) {
         return x >= 0 && x < this.board.length && y >= 0 && y < this.board[0].length;
     }
-    
+
+    // 处理点击
     updateBoard(click, timerCallback) {
         const [x, y] = click;
         if (!this.timer) {
@@ -174,15 +180,6 @@ export class MineSweeper {
             revealTiles(this.board, x, y);
         }
         this.autoFlag();
-        // 检查游戏是否胜利
-        for (const row of this.board) {
-            for (const ele of row) {
-                if (ele.startsWith("E")) {  // 还有E就不行
-                    return;
-                }
-            }
-        }
-        this.handleWin();
     };
 
     // 自动标雷
@@ -250,7 +247,7 @@ export class MineSweeper {
     }
 
     getAdjacentTiles(x, y) {
-        return neighbors.map(([dx, dy])=>[x+dx, y+dy]).filter(([x, y])=>this.isInsideBoard(x, y));
+        return neighbors.map(([dx, dy]) => [x + dx, y + dy]).filter(([x, y]) => this.isInsideBoard(x, y));
     }
 
     revealAdjacentTiles(x, y) {
@@ -277,13 +274,14 @@ export class MineSweeper {
                     this.updateBoard([x + dx, y + dy]);
                 }
             } else {
-                return toReveal.map(([dx,dy])=>[x + dx, y + dy]);
+                return toReveal.map(([dx, dy]) => [x + dx, y + dy]);
             }
         }
     }
 
     handleLose() {
         this.state = "lose";
+        this.recordGame(false);
         this.timer?.clear();
 
         // 显示所有的雷，用"X*"表示？
@@ -299,11 +297,157 @@ export class MineSweeper {
     handleWin() {
         if (this.state === "unpressed") {
             this.state = "win";
-            const userConfig = loadConfig();
-            setTimeout(()=>{
-                submitScore(userConfig.difficulty, this.spentTime);
-            }, 500);
+            // todo: 自动标旗子
+            // this.flagAll();
+            this.recordGame(true);
         }
         this.timer?.clear();
     }
+
+    recordGame(win) {
+        const userConfig = loadConfig();
+        const difficulty = userConfig.difficulty.toLowerCase();
+        submitScore({
+            difficulty,
+            win,
+            clicks: this.clicks,
+            time: this.spentTime, // todo: 毫秒
+            bv: this.get3BV(),   // 整个盘面的3BV
+            currBV: this.get3BVCurr(),  // 到当前步骤为止的3BV
+        });
+    }
+
+    get3BV() {
+        if (this.state === "win") {
+            return calculate3BV(this.board);
+        } else {
+            // TODO: 全部揭开来计算。。
+            return calculate3BV(revealAll(this.board));
+        }
+    }
+    get3BVCurr() {
+        return calculate3BV(this.board);
+    }
+
+    handleClick([x,y], callback) {
+        const snapshot = deepClone(this.board);
+        if (this.isNumTile(x, y)) {
+            this.revealAdjacentTiles(x, y);  // 双击
+        } else {
+            this.updateBoard([x, y], callback);
+        }
+        if (deepEqual(snapshot, this.board)) {
+            this.clicks.wasted++;
+        } else {
+            this.clicks.active++;
+        }
+
+        // 检查游戏是否胜利
+        for (const row of this.board) {
+            for (const ele of row) {
+                if (ele.startsWith("E")) {  // 还有E就不行
+                    return;
+                }
+            }
+        }
+        this.handleWin();
+    }
+}
+
+// board为表示扫雷局面的二维数组
+function calculate3BV(board) {
+
+    let opCount = 0;
+    let numCount = 0;
+
+    // 使用floodFill算法计算op数
+    floodFill(board);
+
+    function floodFill(board) {
+        const visited = [];
+
+        for (let i = 0; i < board.length; i++) {
+            visited[i] = [];
+            for (let j = 0; j < board[0].length; j++) {
+                visited[i][j] = false;
+            }
+        }
+
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[0].length; j++) {
+                if (board[i][j] === 'B' && !visited[i][j]) {
+                    opCount++;
+                    dfs(i, j);
+                }
+            }
+        }
+
+        function dfs(i, j) {
+            if (i < 0 || j < 0 || i >= board.length || j >= board[0].length || visited[i][j] || board[i][j] !== 'B') {
+                return;
+            }
+            visited[i][j] = true;
+            for (const [dx, dy] of neighbors) {
+                dfs(i+dx, j+dy);
+            }
+        }
+    }
+
+    // 统计不在op边缘的数字
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[0].length; j++) {
+          if (parseInt(board[i][j])) {
+            let isBorder = false;
+            for (let [x, y] of neighbors) {
+              let newX = i + x;
+              let newY = j + y;
+              if (newX >= 0 && newX < board.length && newY >= 0 && newY < board[0].length) {
+                if (board[newX][newY] === "B") {
+                  isBorder = true;
+                  break;
+                }
+              }
+            }
+            if (!isBorder) {
+              numCount++;
+            }
+          }
+        }
+      }
+
+    // console.log({opCount, numCount});
+
+    return opCount + numCount;
+}
+
+function deepClone(arr) {
+    if (Array.isArray(arr)) {
+        return [...arr].map(x=>deepClone(x));
+    } else {
+        return arr;
+    }
+}
+function deepEqual(oldBoard, newBoard) {
+    return JSON.stringify(oldBoard) === JSON.stringify(newBoard);
+}
+
+function revealAll(inputBoard) {
+    const rows = inputBoard.length;
+    const cols = inputBoard[0].length;
+    const revealedBoard = deepClone(inputBoard);
+    for (let x = 0; x < rows; x++) {
+        for (let y = 0; y < cols; y++) {
+            if (["E", "E?", "E*"].includes(revealedBoard[x][y])) {
+                // 替换为数字，计算附近的雷数
+                const count = countAdjacentMines(revealedBoard, x, y);
+                if (count > 0) {
+                    revealedBoard[x][y] = count.toString();
+                } else {
+                    // 当前格子为B
+                    revealedBoard[x][y] = "B";
+                }
+            }
+        }
+    }
+    return revealedBoard;
 }
