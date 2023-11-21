@@ -1,6 +1,8 @@
+import faceImageSrc from '../assets/face.svg';
+
 export function loadFaceImages(callback) {
     const img = new Image();
-    img.src = `assets/face.svg`;
+    img.src = faceImageSrc;
     img.onload = callback;
     return img;
 }

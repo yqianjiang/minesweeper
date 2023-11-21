@@ -1,42 +1,59 @@
+import closedImageSrc from '../assets/closed.svg';
+import flagImageSrc from '../assets/flag.svg';
+import questionImageSrc from '../assets/closed_flag.svg';
+import mineRedImageSrc from '../assets/mine_red.svg';
+import mineImageSrc from '../assets/mine.svg';
+import numImageSrc0 from '../assets/type0.svg';
+import numImageSrc1 from '../assets/type1.svg';
+import numImageSrc2 from '../assets/type2.svg';
+import numImageSrc3 from '../assets/type3.svg';
+import numImageSrc4 from '../assets/type4.svg';
+import numImageSrc5 from '../assets/type5.svg';
+import numImageSrc6 from '../assets/type6.svg';
+import numImageSrc7 from '../assets/type7.svg';
+import numImageSrc8 from '../assets/type8.svg';
+
+const numsImageSrc = [numImageSrc0, numImageSrc1, numImageSrc2, numImageSrc3, numImageSrc4, numImageSrc5, numImageSrc6, numImageSrc7, numImageSrc8];
+
 export function loadBoardImages(callback) {
     const svgImages = {}
     // 未挖出的方块
     const imageClosed = new Image();
-    imageClosed.src = "assets/closed.svg";
+    imageClosed.src = closedImageSrc;
     imageClosed.onload = callback;
     svgImages["E"] = imageClosed;
     svgImages["M"] = imageClosed;
 
     const imageFlag = new Image();
-    imageFlag.src = "assets/flag.svg";
+    imageFlag.src = flagImageSrc;
     svgImages["E*"] = imageFlag;
     svgImages["M*"] = imageFlag;
 
     const imageQuestion = new Image();
-    imageQuestion.src = "assets/closed_flag.svg";
+    imageQuestion.src = questionImageSrc;
     svgImages["E?"] = imageQuestion;
     svgImages["M?"] = imageQuestion;
 
     // 已知的方块
     // 踩地雷
     const imageMineRed = new Image();
-    imageMineRed.src = "assets/mine_red.svg";
+    imageMineRed.src = mineRedImageSrc;
     svgImages["X"] = imageMineRed;
 
     // 输的时候揭开的雷
     const imageMine = new Image();
-    imageMine.src = "assets/mine.svg";
+    imageMine.src = mineImageSrc;
     svgImages["X*"] = imageMine;
 
     // 数字
     const imageB = new Image();
-    imageB.src = "assets/type0.svg";
+    imageB.src = numsImageSrc[0];
     svgImages["B"] = imageB;
 
     for (const num in new Array(9).fill(0)) {
         if (num === "0") continue;
         const imageNum = new Image();
-        imageNum.src = `assets/type${num}.svg`;
+        imageNum.src = numsImageSrc[num];
         svgImages[num] = imageNum;
     }
     return svgImages;
