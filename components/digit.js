@@ -1,8 +1,21 @@
+import digitImageSrc0 from '../assets/d0.svg';
+import digitImageSrc1 from '../assets/d1.svg';
+import digitImageSrc2 from '../assets/d2.svg';
+import digitImageSrc3 from '../assets/d3.svg';
+import digitImageSrc4 from '../assets/d4.svg';
+import digitImageSrc5 from '../assets/d5.svg';
+import digitImageSrc6 from '../assets/d6.svg';
+import digitImageSrc7 from '../assets/d7.svg';
+import digitImageSrc8 from '../assets/d8.svg';
+import digitImageSrc9 from '../assets/d9.svg';
+
+const numsImageSrc = [digitImageSrc0, digitImageSrc1, digitImageSrc2, digitImageSrc3, digitImageSrc4, digitImageSrc5, digitImageSrc6, digitImageSrc7, digitImageSrc8, digitImageSrc9];
+
 export function loadDigitImages(callback) {
     const svgImages = {};
     for (const num in new Array(10).fill(0)) {
         const imageNum = new Image();
-        imageNum.src = `assets/d${num}.svg`;
+        imageNum.src = numsImageSrc[num];
         svgImages[num] = imageNum;
     }
     svgImages['0'].onload = callback;

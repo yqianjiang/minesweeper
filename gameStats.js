@@ -1,0 +1,210 @@
+const statsKey = 'minesweeper_stats';
+
+// 记录单个难度的统计
+class DifficultyStats {
+  constructor(difficulty) {
+    this.difficulty = difficulty;
+
+    this.bestScores = [];  // top5
+    this.reset();
+  }
+
+  clearLeaderBoard() {
+    this.bestScores = [];
+  }
+
+  reset() {
+    this.totalGames = 0;
+    this.totalWins = 0;
+    this.winRate = 0; // 胜率
+    this.maxWinStreak = 0; // 最长连胜次数
+    this.maxLoseStreak = 0; // 最长连败次数
+    this.currentWinStreak = 0; // 当前连胜次数
+    this.currentLoseStreak = 0; // 当前连败次数
+    this.highestEfficiency = 0; // 最高效率
+    this.record = [];       // 最近100局的胜负，1=胜, 0=负
+    this.movingWinRate = 0; // 动态胜率(最近100局的胜率)
+  }
+
+  checkNewBestScore(score) {
+    return this.bestScores.length < 5 || score < this.bestScores.slice(-1)[0].time;
+  }
+
+  recordGame({ win, score, playerName }) {
+    this.totalGames++;
+    if (win) {
+      this.record.push(1);
+      this.totalWins++;
+      this.currentWinStreak++;
+      this.currentLoseStreak = 0;
+      this.maxWinStreak = Math.max(this.maxWinStreak, this.currentWinStreak);
+      // 更新leaderboard
+      if (this.checkNewBestScore(score)) {
+        const day = new Date();
+        const curr = { name: playerName || "匿名", time: score, date: day.toLocaleDateString() };
+        const idx = searchInsert(this.bestScores, score);
+        // keep top 5 only
+        this.bestScores = [...this.bestScores.slice(0, idx), curr, ...this.bestScores.slice(idx, 4)];
+      }
+    } else {
+      this.record.push(0);
+      this.currentWinStreak = 0;
+      this.currentLoseStreak++;
+      this.maxLoseStreak = Math.max(this.maxLoseStreak, this.currentLoseStreak);
+    }
+    this.winRate = (this.totalWins / this.totalGames).toString(2);
+
+    if (this.totalGames <= 100) {
+      this.movingWinRate = this.winRate;
+    } else {
+      this.record.shift();  // 超过100，丢弃更远的数据
+      this.movingWinRate = this.record.filter(x => x).length / 100;
+    }
+  }
+
+  // 在本地存储中加载统计数据
+  loadFromStorage() {
+    try {
+      const savedStats = JSON.parse(localStorage.getItem(statsKey + 'Stats' + this.difficulty));
+      for (const key in savedStats) {
+        this[key] = savedStats[key];
+      }
+      const scores = JSON.parse(localStorage.getItem(`${this.difficulty}-scores`)) || [];
+      this.bestScores = scores.slice(0, 5);
+    } catch (error) {
+      console.log("Error loading data from local storage:", error);
+    }
+  }
+
+  // 保存统计数据到本地存储
+  saveToStorage() {
+    localStorage.setItem(statsKey + 'Stats' + this.difficulty, JSON.stringify(this.getStats()));
+    localStorage.setItem(`${this.difficulty}-scores`, JSON.stringify(this.bestScores));
+  }
+
+  getStats() {
+    return {
+      totalGames: this.totalGames,
+      totalWins: this.totalWins,
+      winRate: this.winRate, // 胜率
+      maxWinStreak: this.maxWinStreak, // 最长连胜次数
+      maxLoseStreak: this.maxLoseStreak, // 最长连败次数
+      currentWinStreak: this.currentWinStreak, // 当前连胜次数
+      currentLoseStreak: this.currentLoseStreak, // 当前连败次数
+      highestEfficiency: this.highestEfficiency, // 最高效率
+      record: this.record,      // 最近100局的胜负，1=胜, 0=负
+      movingWinRate: this.movingWinRate,
+    };
+  }
+}
+
+// 记录所有难度统计
+class GameStats {
+  constructor() {
+    this.beginnerStats = new DifficultyStats('beginner');
+    this.intermediateStats = new DifficultyStats('intermediate');
+    this.expertStats = new DifficultyStats('expert');
+
+    this.gameRecords = [];
+    this.loadFromStorage();
+  }
+
+  // 记录一局游戏数据
+  recordGame(gameData, playerName) {
+    gameData.timestamp = Date.now();
+    gameData.clicks.total = gameData.clicks.active + gameData.clicks.wasted;
+    gameData.efficiency = gameData.currBV / gameData.clicks.total;
+    this.gameRecords.push(gameData);
+
+    const { difficulty } = gameData;
+    this[`${difficulty}Stats`].recordGame({ win: gameData.win, score: gameData.time, playerName });
+
+    this.saveToStorage();
+  }
+
+  checkNewBestScore(difficulty, score) {
+    return this[`${difficulty}Stats`].checkNewBestScore(score);
+  }
+
+  getStats(difficulty) {
+    return this[`${difficulty}Stats`].getStats();
+  }
+
+  getBestScore(difficulty) {
+    return this[`${difficulty}Stats`].bestScores;
+  }
+
+  // 在本地存储中加载统计数据
+  loadFromStorage() {
+    try {
+      const savedRecords = JSON.parse(localStorage.getItem(statsKey + 'Records'));
+      if (savedRecords) {
+        this.gameRecords = savedRecords;
+      }
+      this.beginnerStats.loadFromStorage();
+      this.intermediateStats.loadFromStorage();
+      this.expertStats.loadFromStorage();
+    } catch (error) {
+      console.log("Error loading data from local storage:", error);
+    }
+  }
+
+  // 保存统计数据到本地存储
+  saveToStorage() {
+    localStorage.setItem(statsKey + 'Records', JSON.stringify(this.gameRecords));
+    this.beginnerStats.saveToStorage();
+    this.intermediateStats.saveToStorage();
+    this.expertStats.saveToStorage();
+  }
+
+  // 只重置 gameStats,不清空 gameRecords, 以保留历史数据
+  resetStats(difficulty) {
+    if (difficulty) {
+      this[`${difficulty}Stats`].reset();
+    } else {
+      this.beginnerStats.reset();
+      this.intermediateStats.reset();
+      this.expertStats.reset();
+    }
+    this.saveToStorage();
+  }
+
+  clearRecords() {
+    this.gameRecords = [];
+    this.saveToStorage();
+  }
+}
+
+const gameStats = new GameStats();
+export default gameStats;
+
+// 使用:
+// gameStats.recordGame({
+//   difficulty: 'beginner',
+//   win: true,
+//   clicks: {
+//     active: 180,
+//     wasted: 20,
+//   },
+//   time: 60000, // 毫秒
+//   bv: 12,
+//   currBV: 12,
+// });
+// gameStats.getStats("beginner");
+
+function searchInsert(nums, target) {
+  // nums有序：二分法
+  let left = 0, right = nums.length - 1;
+  while (left <= right) {
+    const middle = left + Math.floor((right - left) / 2);
+    if (target === nums[middle].time) {
+      return middle;
+    }
+    if (target > nums[middle].time) {
+      left = middle + 1;
+    } else {
+      right = middle - 1;
+    }
+  }
+  return left;
+};

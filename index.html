@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>扫雷游戏 - 经典小游戏网页版</title>
-    <meta name="description" content="网页版的经典扫雷游戏，电脑或手机直接打开网页就能在线玩扫雷，不用下载安装APP。">
+    <meta name="description" content="网页版的windows XP经典扫雷游戏，电脑或手机直接打开网页就能在线玩扫雷，不用下载安装APP。">
     <meta name="keywords" content="扫雷游戏, 扫雷手机版，扫雷在线玩, 扫雷网页版, 经典游戏, 益智游戏">
     <link rel="stylesheet" href="./components/prompt.css">
     <link rel="stylesheet" href="./style.css">
@@ -28,11 +28,16 @@
         <div class="menu">
             <button id="menu-btn-game">游戏</button>
             <div class="menu-popup menu-popup-game">
+                <button id="start-btn">开局（F2）</button>
+                <hr />
                 <button id="beginner-btn">初级</button>
                 <button id="intermediate-btn">中级</button>
                 <button id="expert-btn">高级</button>
                 <button id="custom-btn">自定义...</button>
+                <hr />
                 <button id="autoflag-btn">关闭自动标雷</button>
+                <!-- <hr /> -->
+                <!-- <button>扫雷英雄榜...</button> -->
             </div>
             <a class="plain-link" href="#help"><button>帮助</button></a>
         </div>
@@ -41,9 +46,9 @@
     <p id="game-tips">* 自动标雷模式已开启，可以在“游戏”菜单下关闭。</p>
     </div>
     <div class="game-intros">
-        <p>这是扫雷经典版，踩中地雷就输啦～祝你好运！</p>
+        <p>主要还原windows XP版的扫雷，并在此基础上增加自动标雷的功能（可关闭）。踩中地雷就输啦～祝你好运！</p>
         <p>如果你小时候一直不知道扫雷游戏的规则，以为是纯碰运气的游戏……本页后面有玩法介绍，强烈建议看一看，可以解锁新大陆哦！</p>
-        <section>
+        <section id="leaderboard">
             <h2>扫雷英雄榜</h2>
             <div class="leaderboard">
                 <div class="leaderboard-section">

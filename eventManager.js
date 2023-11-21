@@ -7,7 +7,7 @@ export class EventManager {
     constructor(ctx, w, h, x0, y0, game, update, renderTime, facePars, onClickBtnGroups) {
         this.ctx = ctx;
         this.game = game;
-        this.update = (...pars)=>requestAnimationFrame(()=>update(...pars));
+        this.update = (...pars) => requestAnimationFrame(() => update(...pars));
         this.renderTime = renderTime;
         this.facePars = facePars;
         this.onClickBtnGroups = onClickBtnGroups;
@@ -26,8 +26,18 @@ export class EventManager {
         this.eventHandlers = {};
     }
 
+    _getElement(elementId) {
+        let element;
+        if (elementId === "document") {
+            element = document;
+        } else {
+            element = document.getElementById(elementId);
+        }
+        return element;
+    }
+
     addEventListener(elementId, eventType, fn) {
-        const element = document.getElementById(elementId);
+        const element = this._getElement(elementId);
         if (!element) return;
 
         if (!this.eventHandlers[elementId]) {
@@ -44,7 +54,7 @@ export class EventManager {
 
     removeAllEventListeners() {
         for (const elementId in this.eventHandlers) {
-            const element = document.getElementById(elementId);
+            const element = this._getElement(elementId);
             if (!element) continue;
 
             for (const eventType in this.eventHandlers[elementId]) {
@@ -102,6 +112,19 @@ export class EventManager {
                 this.setLevel("CUSTOM", pars);
             });
         })
+        
+        
+        this.addEventListener("start-btn", 'click', () => {
+            this._hideMenuPopup();
+            this._restartGame();
+        });
+        this.addEventListener('document', 'keydown', (event) => {
+            if (event.key === 'F2') {
+                // F2键被按下,在这里执行你的代码
+                event.preventDefault();
+                this._restartGame();
+            }
+        });
     }
 
     _hideMenuPopup() {
@@ -130,11 +153,7 @@ export class EventManager {
             }
         } else {  // mode===0且左键点击，挖开
             if (isMouseUp) {
-                if (this.game.isNumTile(x, y)) {
-                    this.game.revealAdjacentTiles(x, y);  // 双击
-                } else {
-                    this.game.updateBoard([x, y], this.renderTime);
-                }
+                this.game.handleClick([x,y], this.renderTime);
             } else {
                 // 按住的状态
                 this._handlePressBoard(x, y);
