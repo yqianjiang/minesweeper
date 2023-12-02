@@ -5,8 +5,7 @@ import { Timer } from './timer.js';
  * 未知的方块表示：
  * 'M' 代表一个 未挖出的 地雷，
  * 'E' 代表一个 未挖出的 空方块，
- * 'E*' 和 'M*'代表玩家的标记...
- * 'E?' 和 'M?'代表玩家的标记...
+ * 'E*' 和 'M*'代表玩家标记的红旗（玩家认为是地雷的格子）...
  * 
  * 已知的方块表示：
  * 'B' 代表没有相邻（上，下，左，右，和所有4个对角线）地雷的 已挖出的 空白方块，
@@ -20,7 +19,7 @@ function countAdjacentMines(board, x, y) {
     for (const [dx, dy] of neighbors) {
         const newX = x + dx;
         const newY = y + dy;
-        if (board[newX] && board[newX][newY] && ["M", "M*", "M?", "X", "X*"].includes(board[newX][newY])) { // 所有是雷的格子，不管玩家标了什么
+        if (board[newX] && board[newX][newY] && ["M", "M*", "X", "X*"].includes(board[newX][newY])) { // 所有是雷的格子，不管玩家标了什么
             count++;
         }
     }
@@ -65,6 +64,7 @@ export class MineSweeper {
     restart() {
         this.numMineCurr = this.numMine;
         this.board = this.generateBoard();
+        this.colorMark = this.generateColorMark(); // 涂色标记
         this.spentTime = 0;
         this.clicks = {
             active: 0,
@@ -111,6 +111,30 @@ export class MineSweeper {
             }
         }
         return board;
+    }
+
+    generateColorMark() {
+        const colorMark = [];
+        const [w, h] = this.size;
+        for (let i = 0; i < w; i++) {
+            colorMark.push(new Array(h).fill(0));
+        }
+        return colorMark;
+    }
+
+    // 添加设置颜色的方法
+    setColor(row, col, color) {
+        this.colorMark[row][col] = color;
+    }
+
+    // 添加获取颜色的方法
+    getColor(row, col) {
+        return this.colorMark[row][col];
+    }
+
+    // 添加清除颜色的方法
+    clearColor(row, col) {
+        this.colorMark[row][col] = 0;
     }
 
     startTiming(callback) {
@@ -196,7 +220,7 @@ export class MineSweeper {
                     let count = 0;  // 记录已知的雷 和 未知的格子
                     for (const [dx, dy] of neighbors) {
                         const val2 = this.board[+x + dx]?.[+y + dy];
-                        if (["M", "E", "M?", "E?"].includes(val2)) {
+                        if (["M", "E"].includes(val2)) {
                             candidates.push([dx, dy]);
                             count++;
                         } else if (["M*", "E*", "X", "X*"].includes(val2)) {
@@ -229,17 +253,18 @@ export class MineSweeper {
             this.board[x][y] = "E";
             this.numMineCurr++;
         }
-        // } else if (val === "M*") {
-        //     this.board[x][y] = "M?";
-        //     this.numMineCurr++;
-        // } else if (val === "E*") {
-        //     this.board[x][y] = "E?";
-        //     this.numMineCurr++;
-        // } else if (val === "M?") {
-        //     this.board[x][y] = "M";
-        // } else if (val === "E?") {
-        //     this.board[x][y] = "E";
-        // }
+    }
+
+    // 涂色标记，可以涂多种颜色。未揭开的格子可以涂色，再次点击已经涂色（任意一种颜色）的格子，可以取消涂色
+    toggleColorMark(x, y, color) {
+        const val = this.board[x][y];
+        if (["E", "M"].includes(val)) {
+            if (this.getColor(x, y) === 0) {
+                this.setColor(x, y, color);
+            } else {
+                this.clearColor(x, y);
+            }
+        }
     }
 
     isNumTile(x, y) {
@@ -263,7 +288,7 @@ export class MineSweeper {
                     count++;
                 }
                 // 记录一下未知的格子
-                if (["E", "M", "E?", "M?"].includes(val2)) {
+                if (["E", "M"].includes(val2)) {
                     toReveal.push([dx, dy]);
                 }
             }
@@ -437,7 +462,7 @@ function revealAll(inputBoard) {
     const revealedBoard = deepClone(inputBoard);
     for (let x = 0; x < rows; x++) {
         for (let y = 0; y < cols; y++) {
-            if (["E", "E?", "E*"].includes(revealedBoard[x][y])) {
+            if (["E", "E*"].includes(revealedBoard[x][y])) {
                 // 替换为数字，计算附近的雷数
                 const count = countAdjacentMines(revealedBoard, x, y);
                 if (count > 0) {
