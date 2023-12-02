@@ -34,7 +34,10 @@ const createModal = (title, content, { onSubmit, onBeforeClose, modalId, onShow 
             paragraph.textContent = content;
             modalContent.appendChild(paragraph);
         } else {
-            modalContent.appendChild(content);
+            const contentContainer = document.createElement('div');
+            contentContainer.classList.add('modal-content-container');
+            contentContainer.appendChild(content);
+            modalContent.appendChild(contentContainer);
         }
         
         const footer = document.createElement('div');
@@ -68,6 +71,9 @@ const createModal = (title, content, { onSubmit, onBeforeClose, modalId, onShow 
             modal.querySelector("p").innerHTML = content;
         } else {
             // 更新content
+            const contentContainer = modal.querySelector(".modal-content-container");
+            contentContainer.innerHTML = "";
+            contentContainer.appendChild(content);
         }
     }
 
@@ -118,7 +124,7 @@ const showModal = (title, msg, onSubmit) => {
     const playerNameInput = document.createElement("input");
     playerNameInput.type = "text";
     playerNameInput.id = "playerNameInput";
-    playerNameInput.placeholder = "请输入您的名字";
+    playerNameInput.value = "匿名";
     content.appendChild(playerNameInput);
 
     // 创建弹窗
@@ -244,12 +250,129 @@ const showCustomModal = (title, onSubmit) => {
     });
 };
 
+import gameStats from "../gameStats.js";
+function updateStats(content, scores, stats) {
+    // 更新最佳时间
+    const bestScores = content.querySelector("#stats-best-scores");
+    bestScores.innerHTML = scores.map((score) => `<li class='row'><span class='col-4'>${score.time} 秒</span><span class='col-6'>${score.date}</span></li>`).join('');
+    
+    // 更新统计信息
+    const totalGames = content.querySelector("#stats-total-games");
+    totalGames.textContent = stats.totalGames;
+    const totalWins = content.querySelector("#stats-total-wins");
+    totalWins.textContent = stats.totalWins;
+    const winRate = content.querySelector("#stats-win-rate");
+    winRate.textContent = (stats.winRate * 100).toFixed(2);
+    const maxWinStreak = content.querySelector("#stats-max-win-streak");
+    maxWinStreak.textContent = stats.maxWinStreak;
+    const maxLoseStreak = content.querySelector("#stats-max-lose-streak");
+    maxLoseStreak.textContent = stats.maxLoseStreak;
+    const currentWinStreak = content.querySelector("#stats-current-win-streak");
+    currentWinStreak.textContent = stats.currentWinStreak;
+}
+
+// 扫雷统计信息弹窗
+const showStatsModal = () => {
+    const title = "扫雷统计信息";
+    const content = document.createElement("div");
+    content.classList.add('stats-modal-content');
+
+    const userConfig = loadConfig();
+    const level = userConfig.difficulty.toLowerCase();
+    const scores = gameStats.getBestScore(level);
+    const stats = gameStats.getStats(level);
+    // 三列内容，第一列选择难度（初级、中级、高级），第二列列出前5名最佳时间，第三列统计信息
+    content.innerHTML = `
+    <div>
+        <p>难度</p>
+        <select id='stats-difficulty' value=${level}>
+            <option value='beginner'>初级</option>
+            <option value='intermediate'>中级</option>
+            <option value='expert'>高级</option>
+        </select>
+    </div>
+    <div class='row'>
+        <div>
+            <p>最佳时间</p>
+            <ul id='stats-best-scores'>
+                ${scores.map((score) => `<li class='row'><span class='col-4'>${score.time} 秒</span><span class='col-6'>${score.date}</span></li>`).join('')}
+            </ul>
+        </div>
+        <div class="stats-info-col">
+            <p>已玩游戏：<span id="stats-total-games">${stats.totalGames}</span></p>
+            <p>已胜游戏：<span id="stats-total-wins">${stats.totalWins}</span></p>
+            <p>获胜率：<span id="stats-win-rate">${(stats.winRate * 100).toFixed(2)}</span>%</p>
+            <p>最多连胜：<span id="stats-max-win-streak">${stats.maxWinStreak}</span></p>
+            <p>最多连败：<span id="stats-max-lose-streak">${stats.maxLoseStreak}</span></p>
+            <p>当前连胜：<span id="stats-current-win-streak">${stats.currentWinStreak}</span></p>
+        </div>
+    </div>
+    <div class='modal-footer'>
+        <button id='stats-reset-btn'>重置</button>
+    </div>`
+
+    // 重置按钮的回调
+    const resetBtn = content.querySelector("#stats-reset-btn");
+    resetBtn.addEventListener("click", () => {
+        const select = content.querySelector("#stats-difficulty");
+        const level = select.value;
+        gameStats.resetStats(level);
+        // 更新内容
+        const scores = gameStats.getBestScore(level);
+        const stats = gameStats.getStats(level);
+        updateStats(content, scores, stats);
+    });
+
+    // 创建弹窗
+    createModal(title, content, { modalId: 'stats', onShow: () => {
+        const userConfig = loadConfig();
+        const level = userConfig.difficulty.toLowerCase();
+        const select = content.querySelector("#stats-difficulty");
+        select.value = level;
+        select.addEventListener("change", () => {
+            const level = select.value;
+            // 更新内容
+            const scores = gameStats.getBestScore(level);
+            const stats = gameStats.getStats(level);
+            updateStats(content, scores, stats);
+        });
+    }});
+}
+
 // 胜利弹窗
-const showWinModal = (time) => {
-    const title = "恭喜";
-    const content = `你赢了！用时${time}秒`
+const showWinModal = (gameData, gameStats) => {
+    const title = "游戏胜利";
+    // 弹窗内容
+    const content = document.createElement("div");
+    content.innerHTML = `<p class='center bold'>恭喜！你赢了！</p>
+    <p>时间：${gameData.time} 秒</p>
+    <div class='box'>
+    <div class='row'>
+        <div class='col-6'>
+            <p>最佳时间：${gameStats.getBestScore(gameData.difficulty)[0].time} 秒</p>
+        </div>
+        <div class='col-6'>
+            <p>日期：${gameStats.getBestScore(gameData.difficulty)[0].date}</p>
+        </div>
+    </div>
+    <p>已玩游戏：${gameStats.getStats(gameData.difficulty).totalGames}</p>
+    <div class='row'>
+        <div class='col-6'>
+            <p>已胜游戏：${gameStats.getStats(gameData.difficulty).totalWins}</p>
+        </div>
+        <div class='col-6'>
+            <p>百分比：${(gameStats.getStats(gameData.difficulty).winRate * 100).toFixed(2)}%</p>
+        </div>
+    </div>
+    </div>`
+    // <div class='modal-footer'>
+    //     <button>再玩一局</button>
+    //     <button>关闭窗口</button>
+    // </div>`
+
+    // const content = `恭喜！你赢了！用时${time}秒`
     // 创建弹窗
     createModal(title, content, { modalId: 'win' });
 };
 
-export { showModal, showWinModal, showCustomModal };
+export { showModal, showWinModal, showCustomModal, showStatsModal };

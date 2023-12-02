@@ -5,8 +5,8 @@ class DifficultyStats {
   constructor(difficulty) {
     this.difficulty = difficulty;
 
-    this.bestScores = [];  // top5
     this.reset();
+    this.clearLeaderBoard();
   }
 
   clearLeaderBoard() {
@@ -52,7 +52,7 @@ class DifficultyStats {
       this.currentLoseStreak++;
       this.maxLoseStreak = Math.max(this.maxLoseStreak, this.currentLoseStreak);
     }
-    this.winRate = (this.totalWins / this.totalGames).toString(2);
+    this.winRate = this.totalWins / this.totalGames;
 
     if (this.totalGames <= 100) {
       this.movingWinRate = this.winRate;
@@ -157,15 +157,10 @@ class GameStats {
     this.expertStats.saveToStorage();
   }
 
-  // 只重置 gameStats,不清空 gameRecords, 以保留历史数据
+  // 重置扫雷统计信息（包括 gameStats 和英雄榜），不清空 gameRecords
   resetStats(difficulty) {
-    if (difficulty) {
-      this[`${difficulty}Stats`].reset();
-    } else {
-      this.beginnerStats.reset();
-      this.intermediateStats.reset();
-      this.expertStats.reset();
-    }
+    this[`${difficulty}Stats`].reset();
+    this[`${difficulty}Stats`].clearLeaderBoard();
     this.saveToStorage();
   }
 

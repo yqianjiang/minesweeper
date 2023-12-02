@@ -1,5 +1,5 @@
 import { levels, updateUserConfig } from './config.js';
-import { showCustomModal } from "./components/prompt.js";
+import { showCustomModal, showStatsModal } from "./components/prompt.js";
 import { checkClickBtn } from "./utils.js"
 import { render } from "./main.js"
 
@@ -111,8 +111,11 @@ export class EventManager {
             showCustomModal("自定义雷区", (pars) => {
                 this.setLevel("CUSTOM", pars);
             });
+        })        
+        this.addEventListener("stats-btn", "click", () => {
+            this._hideMenuPopup();
+            showStatsModal();
         })
-        
         
         this.addEventListener("start-btn", 'click', () => {
             this._hideMenuPopup();

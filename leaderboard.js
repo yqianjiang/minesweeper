@@ -41,14 +41,15 @@ export function submitScore(gameData) {
     }
 
     if (gameData.win && gameStats.checkNewBestScore(level, gameData.time)) {
-        showModal("新记录", `请在英雄榜留下你的名字（可选）`, (playerName) => {
+        showModal("新记录", `请留尊姓大名`, (playerName) => {
             gameStats.recordGame(gameData, playerName);
             updateLeaderboard(level);
+            showWinModal(gameData, gameStats);
         });
     } else {
         gameStats.recordGame(gameData);
         if (gameData.win) {
-            showWinModal(gameData.time);
+            showWinModal(gameData, gameStats);
         }
     }
 }

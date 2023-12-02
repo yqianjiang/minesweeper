@@ -70,7 +70,7 @@
     margin-top: 0;
 }
 
-#submitBtn {
+.modal-content button {
     padding: 4px 16px;
     color: black;
     cursor: pointer;
@@ -80,6 +80,57 @@
     background: #F3F2EE;
 }
 
-#submitBtn:hover, #submitBtn:focus {
+.modal-content button:hover, .modal-content button:focus {
     outline: 2px solid #AFC9ED;
+}
+
+.modal-content .row {
+    display: flex;
+    margin: 8px 0;
+}
+
+.modal-content .col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.modal-content .col-6 p {
+    margin: 0 8px;
+}
+.modal-content .col-4 {
+    flex: 0 0 33%;
+    max-width: 33%;
+}
+
+#stats-best-scores {
+    padding: 0;
+    margin: 0;
+    min-width: 160px;
+}
+
+#stats-best-scores .row {
+    align-items: center;
+    gap: 8px;
+}
+
+.stats-info-col {
+    min-width: 140px;
+}
+
+.modal-content .center {
+    text-align: center;
+    margin: 8px auto;
+}
+
+.modal-content .bold {
+    font-weight: bold;
+}
+
+.box {
+    margin: 16px 0;
+}
+
+.stats-modal-content {
+    padding: 0 16px;
+    font-size: 14px;
 }
