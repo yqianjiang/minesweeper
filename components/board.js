@@ -88,3 +88,20 @@ export function renderBoard(ctx, board, w, h, svgImages, x, y, pressPositions) {
         }
     }
 }
+
+export function renderColorMark(ctx, board, colorMark, w, h, x, y) {
+    for (const i in colorMark) {
+        for (const j in colorMark[i]) {
+            const color = colorMark[i][j];
+            const xPos = x + w * j;
+            const yPos = y + h * i;
+            if (!color || !["M", "E"].includes(board[i][j])) {
+                
+            } else {
+                // 填充颜色
+                ctx.fillStyle = color;
+                ctx.fillRect(xPos, yPos, w, h);
+            }
+        }
+    }
+}

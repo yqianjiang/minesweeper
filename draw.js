@@ -2,6 +2,7 @@ import { drawDigitBg } from "./components/digit.js"
 import { BoxDrawer } from "./components/box.js"
 import { defaultSizes as size, defaultStyles as color } from "./config.js"
 import { checkClickBtn } from "./utils.js"
+import colorManager from "./colorManager.js"
 
 const H_TOOLBOX = 52;
 const OUTER_SIZE = size.BORDER_INNER * 2 + size.BORDER_MAIN;
@@ -38,6 +39,12 @@ export function drawStaticBg(ctx, contentHeight, contentWidth, x0, y0) {
         if (checked) {
             // 选中状态
             bottomToolboxBtn.drawInner(borderWidth);
+            // 标记模式下，按钮加上相应的颜色，并且再次点击可以切换颜色
+            if (text === "标记") {
+                const color = colorManager.getCurrColor();
+                ctx.fillStyle = color;
+                ctx.fillRect(x0, y0 + h / 2, w, h);
+            }
         } else {
             // 未选中状态
             bottomToolboxBtn.drawOuter(borderWidth);
@@ -54,10 +61,13 @@ export function drawStaticBg(ctx, contentHeight, contentWidth, x0, y0) {
     }
     const btns = [
         {
-            x: x0 + contentWidth/2 - btnPars.w - btnPars.px,
+            x: x0 + contentWidth/2 - btnPars.w * 2 - btnPars.px,
         },
         {
-            x: x0 + contentWidth/2 + btnPars.px,
+            x: x0 + contentWidth/2 - btnPars.w / 2,
+        },
+        {
+            x: x0 + contentWidth/2 + btnPars.w + btnPars.px,
         },
     ]
     const renderBtnGroups = (selectIdx) => {
@@ -65,6 +75,8 @@ export function drawStaticBg(ctx, contentHeight, contentWidth, x0, y0) {
         drawBtn(ctx, btns[0].x, yBottomBox, btnPars, selectIdx===0);
         btnPars.text = "插旗";
         drawBtn(ctx, btns[1].x, yBottomBox, btnPars, selectIdx===1);
+        btnPars.text = "标记";
+        drawBtn(ctx, btns[2].x, yBottomBox, btnPars, selectIdx===2);
     }
     renderBtnGroups(0);
     const onClickBtnGroups = (x, y) => {

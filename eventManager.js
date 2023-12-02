@@ -2,6 +2,11 @@ import { levels, updateUserConfig } from './config.js';
 import { showCustomModal, showStatsModal } from "./components/prompt.js";
 import { checkClickBtn } from "./utils.js"
 import { render } from "./main.js"
+import colorManager from './colorManager.js';
+
+const DIG_MODE = 0;
+const FLAG_MODE = 1;
+const MARK_MODE = 2;
 
 export class EventManager {
     constructor(ctx, w, h, x0, y0, game, update, renderTime, facePars, onClickBtnGroups) {
@@ -18,9 +23,7 @@ export class EventManager {
         this.y0 = y0;
         this.scaleFactor = 1;
         this.pressing = false;
-        this.mode = 0;
-        // 0: 挖开的模式
-        // 1: 插旗模式
+        this.mode = DIG_MODE;
 
         this.menuPopupGame = null;
         this.eventHandlers = {};
@@ -150,11 +153,15 @@ export class EventManager {
         this.update();
     }
     _handleClickBoard(event, x, y, isMouseUp) {
-        if (this.mode === 1 || event.button === 2) {  // 右键或插旗模式，标记
+        if (this.mode === FLAG_MODE || event.button === 2) {  // 右键或插旗模式
             if (!isMouseUp) {
                 this.game.toggleFlag(x, y);
             }
-        } else {  // mode===0且左键点击，挖开
+        } else if (this.mode === MARK_MODE) {  // 涂色标记
+            if (!isMouseUp) {
+                this.game.toggleColorMark(x, y, colorManager.getCurrColor());
+            }
+        } else {  // 挖开模式
             if (isMouseUp) {
                 this.game.handleClick([x,y], this.renderTime);
             } else {
@@ -194,6 +201,12 @@ export class EventManager {
             } else {
                 // 下方工具栏
                 const selectIdx = this.onClickBtnGroups(cx, cy);
+                if (this.mode === MARK_MODE && selectIdx === MARK_MODE) {
+                    // 涂色模式下，再次点击可以切换颜色
+                    if (!isMouseUp) {
+                        colorManager.switchNewColor();
+                    }
+                }
                 if (selectIdx !== -1) {
                     this.mode = selectIdx;
                 }
