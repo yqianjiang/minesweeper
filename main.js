@@ -2,7 +2,7 @@ import { MineSweeper } from "./game.js";
 import { drawStaticBg } from "./draw.js";
 import { renderDigit, loadDigitImages } from "./components/digit.js";
 import { renderFace, loadFaceImages, drawFaceBg } from "./components/face.js";
-import { renderBoard, loadBoardImages, renderColorMark } from "./components/board.js";
+import { renderBoard, loadBoardImages, renderWrongFlag, renderColorMark } from "./components/board.js";
 import { levels, loadConfig } from './config.js';
 import { EventManager, setAutoFlagText } from "./eventManager.js"
 
@@ -81,6 +81,10 @@ export function render(ctx, level) {
         }
         renderBoard(ctx, game.board, w, h, svgImages, x0, y0, pressPositions);
         renderColorMark(ctx, game.board, game.colorMark, w, h, x0, y0);
+
+        if (game.state === "lose") {
+            renderWrongFlag(ctx, game.board, w, h, x0, y0)
+        }
     }
 
     // 注册事件监听(todo: 不在render new这个对象？而是提供方法更新参数？)

@@ -89,6 +89,27 @@ export function renderBoard(ctx, board, w, h, svgImages, x, y, pressPositions) {
     }
 }
 
+
+export function renderWrongFlag(ctx, board, w, h, x, y) {
+    for (const i in board) {
+        for (const j in board[i]) {
+            if (board[i][j] === "E*") {
+                const xPos = x + w * j;
+                const yPos = y + h * i;
+                
+                // 画一个红色叉叉
+                ctx.beginPath();
+                ctx.moveTo(xPos, yPos);
+                ctx.lineTo(xPos + w, yPos + h);
+                ctx.moveTo(xPos + w, yPos);
+                ctx.lineTo(xPos, yPos + h);
+                ctx.strokeStyle = "red";
+                ctx.stroke();
+            }
+        }
+    }
+}
+
 export function renderColorMark(ctx, board, colorMark, w, h, x, y) {
     for (const i in colorMark) {
         for (const j in colorMark[i]) {
