@@ -1,7 +1,7 @@
 import { levels, updateUserConfig } from './config.js';
 import { showCustomModal, showStatsModal } from "./components/prompt.js";
 import { checkClickBtn } from "./utils.js"
-import { render } from "./main.js"
+import { render } from "./render.js"
 import colorManager from './colorManager.js';
 
 const DIG_MODE = 0;
@@ -9,11 +9,19 @@ const FLAG_MODE = 1;
 const MARK_MODE = 2;
 
 export class EventManager {
-    constructor(ctx, w, h, x0, y0, game, update, renderTime, facePars, onClickBtnGroups) {
+    constructor() {
+        this.scaleFactor = 1;
+        this.pressing = false;
+        this.mode = DIG_MODE;
+
+        this.menuPopupGame = null;
+        this.eventHandlers = {};
+    }
+
+    setup(ctx, w, h, x0, y0, game, update, facePars, onClickBtnGroups) {
         this.ctx = ctx;
         this.game = game;
         this.update = (...pars) => requestAnimationFrame(() => update(...pars));
-        this.renderTime = renderTime;
         this.facePars = facePars;
         this.onClickBtnGroups = onClickBtnGroups;
 
@@ -21,12 +29,6 @@ export class EventManager {
         this.h = h;
         this.x0 = x0;
         this.y0 = y0;
-        this.scaleFactor = 1;
-        this.pressing = false;
-        this.mode = DIG_MODE;
-
-        this.menuPopupGame = null;
-        this.eventHandlers = {};
     }
 
     _getElement(elementId) {
@@ -163,7 +165,7 @@ export class EventManager {
             }
         } else {  // 挖开模式
             if (isMouseUp) {
-                this.game.handleClick([x,y], this.renderTime);
+                this.game.handleClick([x,y]);
             } else {
                 // 按住的状态
                 this._handlePressBoard(x, y);
@@ -243,7 +245,7 @@ export class EventManager {
         // 清空 canvas
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-        render(this.ctx, pars);
+        render(this.ctx, pars, this);
     }
     setLevel(level, customPars) {
         // 更新用户配置
@@ -251,6 +253,9 @@ export class EventManager {
         const pars = customPars || levels[level];
         updateUserConfig("level", pars);
 
+        const size = pars.size;
+        const numMine = pars.n;
+        this.game.setSize(size, numMine);
         this._reRender(pars);
     }
 }
