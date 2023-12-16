@@ -11,6 +11,7 @@ export function loadFaceImages(callback) {
 export function renderFace(ctx, state, image, { w, x, y }) {
     const stateMap = {
         "unpressed": 0,
+        "playing": 0,
         "active": 1,  // 揭开新的，持续一下就变回unpressed
         "win": 2,
         "lose": 3,

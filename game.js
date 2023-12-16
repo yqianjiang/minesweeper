@@ -46,13 +46,50 @@ function randInt(lower, upper) {
     return lower + Math.floor(Math.random() * (upper - lower + 1))
 }
 
+// 当游戏状态改变时，保存状态
+function saveGameState(gameState) {
+    localStorage.setItem('minesweeper_gameState', JSON.stringify(gameState));
+}
+
+// 在页面加载时恢复状态
+function loadGameState() {
+    const savedGameState = localStorage.getItem('minesweeper_gameState');
+    if (savedGameState) {
+        const gameState = JSON.parse(savedGameState);
+        return gameState;
+    }
+}
+
 export class MineSweeper {
     constructor(size, numMine) {
         const userConfig = loadConfig();
-        this.setSize(size, numMine);
         this.isAutoFlag = userConfig.autoFlag;
         this.isFirstBlank = userConfig.firstBlank;
         this.isFirstSafe = userConfig.firstSafe;
+        if (!this.loadGameState()) {
+            this.setSize(size, numMine);
+        }
+    }
+
+    saveGameState() {
+        saveGameState(this);
+    }
+
+    loadGameState() {
+        const gameState = loadGameState();
+        if (gameState) {
+            this.size = gameState.size;
+            this.numMine = gameState.numMine;
+            this.numMineCurr = gameState.numMineCurr;
+            this.board = gameState.board;
+            this.colorMark = gameState.colorMark;
+            this.spentTime = gameState.spentTime;
+            this.clicks = gameState.clicks;
+            this.state = gameState.state;
+            this.timer = null;
+            return true;
+        }
+        return false;
     }
 
     setSize(size, numMine) {
@@ -73,6 +110,7 @@ export class MineSweeper {
         this.state = "unpressed";
         this.timer?.clear();
         this.timer = null;
+        this.saveGameState();
     }
 
     generateBoard(click) {
@@ -137,10 +175,11 @@ export class MineSweeper {
         this.colorMark[row][col] = 0;
     }
 
-    startTiming(callback) {
+    startTiming() {
         this.timer = new Timer(() => {
             this.spentTime += 1;
-            callback();
+            this.renderTime(this.spentTime);
+            this.saveGameState();
         })
         this.timer.start();
     }
@@ -169,10 +208,19 @@ export class MineSweeper {
         return x >= 0 && x < this.board.length && y >= 0 && y < this.board[0].length;
     }
 
+    setRenderTime(renderTime) {
+        this.renderTime = renderTime;
+        // 如果游戏进行中，恢复计时
+        if (this.state === "playing" && !this.timer) {
+            this.startTiming();
+        }
+    }
+
     // 处理点击
-    updateBoard(click, timerCallback) {
+    updateBoard(click) {
         const [x, y] = click;
-        if (!this.timer) {
+        if (this.state === "unpressed") {
+            this.state = "playing";
             if (this.isFirstBlank) {
                 // 保证第一个点击为空白
                 this.board = this.generateBoard(click);
@@ -184,7 +232,7 @@ export class MineSweeper {
                     this.board[newX][newY] = "M"; // Place the mine in a new location
                 }
             }
-            this.startTiming(timerCallback);
+            this.startTiming();
         }
         // 检查玩家点击：点击了E或M
         const curr = this.board[x][y];
@@ -317,16 +365,18 @@ export class MineSweeper {
                 }
             }
         }
+        this.saveGameState();
     }
 
     handleWin() {
-        if (this.state === "unpressed") {
+        if (this.state === "playing") {
             this.state = "win";
             // todo: 自动标旗子
             // this.flagAll();
             this.recordGame(true);
         }
         this.timer?.clear();
+        this.saveGameState();
     }
 
     recordGame(win) {
@@ -354,12 +404,12 @@ export class MineSweeper {
         return calculate3BV(this.board);
     }
 
-    handleClick([x,y], callback) {
+    handleClick([x,y]) {
         const snapshot = deepClone(this.board);
         if (this.isNumTile(x, y)) {
             this.revealAdjacentTiles(x, y);  // 双击
         } else {
-            this.updateBoard([x, y], callback);
+            this.updateBoard([x, y]);
         }
         if (deepEqual(snapshot, this.board)) {
             this.clicks.wasted++;
