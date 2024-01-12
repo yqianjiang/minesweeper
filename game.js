@@ -278,6 +278,10 @@ export class MineSweeper {
                     // 如果剩余的未知格子+已知的雷的数量恰好等于数字，就把未知的格子标记为雷
                     if (count === val) {
                         for (const [dx, dy] of candidates) {
+                            // this.numMineCurr 需要大于 1 才可以标记为雷
+                            if (this.numMineCurr < 1) {
+                                break;
+                            }
                             this.board[+x + dx][+y + dy] += "*";
                             this.numMineCurr--;
                         }
