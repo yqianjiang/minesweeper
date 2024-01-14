@@ -1,4 +1,9 @@
+import userInfo from "./userInfo";
 const statsKey = 'minesweeper_stats';
+
+// const host = 'https://minesweeper.webgames.fun';
+const host = 'https://webgames.fun';
+// const host = 'http://localhost:15004';
 
 // 记录单个难度的统计
 class DifficultyStats {
@@ -30,7 +35,28 @@ class DifficultyStats {
     return this.bestScores.length < 5 || score < this.bestScores.slice(-1)[0].time;
   }
 
+  uploadScore(data) {
+    const url = host + '/api/v1/leaderboard/' + this.difficulty;
+    const headers = {
+      // 'X-Bmob-Application-Id': 'f6d5e6f1f6b8c5b5f0e3f0a1f3d5a1e9',
+      // 'X-Bmob-REST-API-Key': 'd8e8e0b6d4c1d4b0d9c2a1b7f0d7c9c7',
+      'Content-Type': 'application/json',
+    };
+    const addition = {
+      ua: navigator.userAgent,
+      uuid: userInfo.uuid,
+    };
+    const body = JSON.stringify({ ...addition, ...data });
+    fetch(url, { method: 'POST', headers, body })
+      .then(res => res.json())
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+  }
+
   recordGame({ win, score, playerName }) {
+    if (playerName) {
+      userInfo.updateName(playerName);
+    }
     this.totalGames++;
     if (win) {
       this.record.push(1);
@@ -41,11 +67,12 @@ class DifficultyStats {
       // 更新leaderboard
       if (this.checkNewBestScore(score)) {
         const day = new Date();
-        const curr = { name: playerName || "匿名", time: score, date: day.toLocaleDateString() };
+        const curr = { name: userInfo.name || '匿名', time: score, date: day.toLocaleDateString() };
         const idx = searchInsert(this.bestScores, score);
         // keep top 5 only
         this.bestScores = [...this.bestScores.slice(0, idx), curr, ...this.bestScores.slice(idx, 4)];
       }
+      this.uploadScore({ name: userInfo.name || '匿名', score: score });
     } else {
       this.record.push(0);
       this.currentWinStreak = 0;

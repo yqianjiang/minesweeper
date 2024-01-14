@@ -51,29 +51,40 @@
         <p>主要还原 Windows XP 版的扫雷，并在此基础上增加自动标雷的功能（可关闭）。踩中地雷就输啦～祝你好运！</p>
         <p>如果你小时候一直不知道扫雷游戏的规则，以为是纯碰运气的游戏……本页后面有玩法介绍，强烈建议看一看，可以解锁新大陆哦！</p>
         <section id="leaderboard">
-            <h2>扫雷英雄榜</h2>
+            <h2>扫雷英雄榜（在线）</h2>
+            <p>* 现在支持联网的扫雷英雄榜啦！本地成绩仍然可以在游戏菜单的 "扫雷信息统计" 中查看。</p>
+            <p>* 请注意，这个在线英雄榜功能只从 2024 年 1 月 14 日开始收集数据，且功能可能尚未稳定，如果在使用过程中出现任何问题，欢迎加 QQ 群反馈。</p>
             <div class="leaderboard">
                 <div class="leaderboard-section">
                     <h3>初级</h3>
                     <ul id="beginner-leaderboard">
-                        <li>暂时还没有分数，等你来刷榜哦！</li>
+                        <li>数据加载中...</li>
                     </ul>
                 </div>
 
                 <div class="leaderboard-section">
                     <h3>中级</h3>
                     <ul id="intermediate-leaderboard">
-                        <li>暂时还没有分数，等你来刷榜哦！</li>
+                        <li>数据加载中...</li>
                     </ul>
                 </div>
 
                 <div class="leaderboard-section">
                     <h3>高级</h3>
                     <ul id="expert-leaderboard">
-                        <li>暂时还没有分数，等你来刷榜哦！</li>
+                        <li>数据加载中...</li>
                     </ul>
                 </div>
             </div>
+            <p>
+                最后更新时间：<span id="leaderboard-update-time">---</span>
+                <button id="btn-refresh-leaderboard">刷新</button>
+            </p>
+            <p>
+                我的昵称：<span id="player-name"></span>
+                <button id="btn-change-name">修改</button>
+            </p>
+            <p>* 昵称用于展示在扫雷英雄榜中（可重名），修改后的昵称将会在下次游戏获胜上传成绩时生效，已提交的成绩的昵称不会被修改。</p>
         </section>
         <h2 id="help">扫雷操作说明</h2>
         <p>手机上可以放大和拖动画布来玩哦，打开自动标雷模式，手机玩着更方便。IOS 用户可以在 Safari 浏览器添加到主屏幕。</p>

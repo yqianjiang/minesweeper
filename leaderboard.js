@@ -1,33 +1,48 @@
 import { showModal, showWinModal } from "./components/prompt.js";
 import gameStats from "./gameStats.js";
+import userInfo from "./userInfo";
+
+const host = 'https://webgames.fun';
+// const host = 'http://localhost:15004';
 
 // 获取按钮和英雄榜元素
-const beginnerLeaderboard = document.getElementById("beginner-leaderboard");
-const intermediateLeaderboard = document.getElementById("intermediate-leaderboard");
-const expertLeaderboard = document.getElementById("expert-leaderboard");
-const leaderboard = {
-    beginner: beginnerLeaderboard,
-    intermediate: intermediateLeaderboard,
-    expert: expertLeaderboard,
+const domLastUpdateTime = document.getElementById("leaderboard-update-time");
+const domBtnRefresh = document.getElementById("btn-refresh-leaderboard");
+const leaderBoard = {
+    beginner: document.getElementById("beginner-leaderboard"),
+    intermediate: document.getElementById("intermediate-leaderboard"),
+    expert: document.getElementById("expert-leaderboard"),
 }
 
 // 更新页面上的英雄榜数据
-export function updateLeaderboard(level) {
-
-    // const stats = gameStats.getStats(level);
-
-    const topScores = gameStats.getBestScore(level);
-    if (!topScores.length) {
-        return;
+export async function updateLeaderBoard(level) {
+    const topScores = await fetchLeaderBoard(level);
+    if (topScores.length) {
+        leaderBoard[level].innerHTML = "";
+        topScores.forEach(({ name, score, create_time: date }, index) => {
+            const listItem = document.createElement("li");
+            // 把 date 从 UTC 时间转换成当地时间
+            date = date ? new Date(date + "Z").toLocaleString("zh").split(" ")[0] : null;
+            listItem.textContent = `${index + 1}. ${name} - ${score}秒 - ${date || "N/A"}`;
+            leaderBoard[level].appendChild(listItem);
+        });
+    } else {
+        leaderBoard[level].innerHTML = `暂时还没有分数，等你来刷榜哦！`;
     }
-    // 清空英雄榜
-    leaderboard[level].innerHTML = "";
+    domLastUpdateTime.textContent = new Date().toLocaleString("zh");
+}
 
-    topScores.forEach((score, index) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `${index + 1}. ${score.name} - ${score.time}秒 - ${score.date || "2023/10/22前"}`;
-        leaderboard[level].appendChild(listItem);
-    });
+async function fetchLeaderBoard(level) {
+    const url = host + '/api/v1/leaderboard/' + level;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        return data?.allTime || [];
+    } catch (err) {
+        console.log(err);
+        return [];
+    }
 }
 
 // 处理提交成绩事件
@@ -40,10 +55,11 @@ export function submitScore(gameData) {
         return;
     }
 
-    if (gameData.win && gameStats.checkNewBestScore(level, gameData.time)) {
-        showModal("新记录", `请留尊姓大名`, (playerName) => {
+    if (gameData.win && !userInfo.name) {
+        showModal("游戏胜利", `请留尊姓大名`, (playerName) => {
+            userInfo.updateName(playerName);
+            domPlayerName.textContent = playerName;
             gameStats.recordGame(gameData, playerName);
-            updateLeaderboard(level);
             showWinModal(gameData, gameStats);
         });
     } else {
@@ -55,6 +71,26 @@ export function submitScore(gameData) {
 }
 
 // 初始化英雄榜
-updateLeaderboard("beginner");
-updateLeaderboard("intermediate");
-updateLeaderboard("expert");
+updateLeaderBoard("beginner");
+updateLeaderBoard("intermediate");
+updateLeaderBoard("expert");
+
+// 绑定刷新英雄榜按钮事件
+domBtnRefresh.addEventListener("click", () => {
+    updateLeaderBoard("beginner");
+    updateLeaderBoard("intermediate");
+    updateLeaderBoard("expert");
+});
+
+// 展示玩家昵称
+const domBtnChangeName = document.getElementById("btn-change-name");
+const domPlayerName = document.getElementById("player-name");
+domPlayerName.textContent = userInfo.name;
+
+// 绑定修改昵称按钮事件
+domBtnChangeName.addEventListener("click", () => {
+    showModal("修改昵称", `请输入新的昵称`, (playerName) => {
+        userInfo.updateName(playerName);
+        domPlayerName.textContent = playerName;
+    });
+});
