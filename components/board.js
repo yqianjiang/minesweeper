@@ -16,113 +16,113 @@ import numImageSrc8 from '../assets/type8.svg';
 const numsImageSrc = [numImageSrc0, numImageSrc1, numImageSrc2, numImageSrc3, numImageSrc4, numImageSrc5, numImageSrc6, numImageSrc7, numImageSrc8];
 
 export function loadBoardImages(callback) {
-    const svgImages = {}
-    // 未挖出的方块
-    const imageClosed = new Image();
-    imageClosed.src = closedImageSrc;
-    imageClosed.onload = callback;
-    svgImages["E"] = imageClosed;
-    svgImages["M"] = imageClosed;
+  const svgImages = {}
+  // 未挖出的方块
+  const imageClosed = new Image();
+  imageClosed.src = closedImageSrc;
+  imageClosed.onload = callback;
+  svgImages["E"] = imageClosed;
+  svgImages["M"] = imageClosed;
 
-    const imageFlag = new Image();
-    imageFlag.src = flagImageSrc;
-    svgImages["E*"] = imageFlag;
-    svgImages["M*"] = imageFlag;
+  const imageFlag = new Image();
+  imageFlag.src = flagImageSrc;
+  svgImages["E*"] = imageFlag;
+  svgImages["M*"] = imageFlag;
 
-    const imageQuestion = new Image();
-    imageQuestion.src = questionImageSrc;
-    svgImages["E?"] = imageQuestion;
-    svgImages["M?"] = imageQuestion;
+  const imageQuestion = new Image();
+  imageQuestion.src = questionImageSrc;
+  svgImages["E?"] = imageQuestion;
+  svgImages["M?"] = imageQuestion;
 
-    // 已知的方块
-    // 踩地雷
-    const imageMineRed = new Image();
-    imageMineRed.src = mineRedImageSrc;
-    svgImages["X"] = imageMineRed;
+  // 已知的方块
+  // 踩地雷
+  const imageMineRed = new Image();
+  imageMineRed.src = mineRedImageSrc;
+  svgImages["X"] = imageMineRed;
 
-    // 输的时候揭开的雷
-    const imageMine = new Image();
-    imageMine.src = mineImageSrc;
-    svgImages["X*"] = imageMine;
+  // 输的时候揭开的雷
+  const imageMine = new Image();
+  imageMine.src = mineImageSrc;
+  svgImages["X*"] = imageMine;
 
-    // 数字
-    const imageB = new Image();
-    imageB.src = numsImageSrc[0];
-    svgImages["B"] = imageB;
+  // 数字
+  const imageB = new Image();
+  imageB.src = numsImageSrc[0];
+  svgImages["B"] = imageB;
 
-    for (const num in new Array(9).fill(0)) {
-        if (num === "0") continue;
-        const imageNum = new Image();
-        imageNum.src = numsImageSrc[num];
-        svgImages[num] = imageNum;
-    }
-    return svgImages;
+  for (const num in new Array(9).fill(0)) {
+    if (num === "0") continue;
+    const imageNum = new Image();
+    imageNum.src = numsImageSrc[num];
+    svgImages[num] = imageNum;
+  }
+  return svgImages;
 }
 
 // 渲染board
 export function renderBoard(ctx, board, w, h, svgImages, x, y, pressPositions) {
-    // w, h为每个格子的宽高
-    for (const i in board) {
-        for (const j in board[i]) {
-            let cellValue = board[i][j];
-            const xPos = x + w * j;
-            const yPos = y + h * i;
-            if (cellValue in svgImages) {
-                // 根据值获取对应的SVG图像
-                const svgImage = svgImages[cellValue];
-                ctx.drawImage(svgImage, xPos, yPos, w, h);
-            }
-        }
+  // w, h为每个格子的宽高
+  for (const i in board) {
+    for (const j in board[i]) {
+      let cellValue = board[i][j];
+      const xPos = x + w * j;
+      const yPos = y + h * i;
+      if (cellValue in svgImages) {
+        // 根据值获取对应的SVG图像
+        const svgImage = svgImages[cellValue];
+        ctx.drawImage(svgImage, xPos, yPos, w, h);
+      }
     }
+  }
 
-    if (!pressPositions) return;
-    for (const pressPosition of pressPositions) {
-        const [i, j] = pressPosition;
-        if (["M", "E"].includes(board[i][j])) {
-            const xPos = x + w * j;
-            const yPos = y + h * i;
-            const svgImage = svgImages["B"];
-            if (svgImage) {
-                ctx.drawImage(svgImage, xPos, yPos, w, h);
-            }
-        }
+  if (!pressPositions) return;
+  for (const pressPosition of pressPositions) {
+    const [i, j] = pressPosition;
+    if (["M", "E"].includes(board[i][j])) {
+      const xPos = x + w * j;
+      const yPos = y + h * i;
+      const svgImage = svgImages["B"];
+      if (svgImage) {
+        ctx.drawImage(svgImage, xPos, yPos, w, h);
+      }
     }
+  }
 }
 
 
 export function renderWrongFlag(ctx, board, w, h, x, y) {
-    for (const i in board) {
-        for (const j in board[i]) {
-            if (board[i][j] === "E*") {
-                const xPos = x + w * j;
-                const yPos = y + h * i;
-                
-                // 画一个红色叉叉
-                ctx.beginPath();
-                ctx.moveTo(xPos, yPos);
-                ctx.lineTo(xPos + w, yPos + h);
-                ctx.moveTo(xPos + w, yPos);
-                ctx.lineTo(xPos, yPos + h);
-                ctx.strokeStyle = "red";
-                ctx.stroke();
-            }
-        }
+  for (const i in board) {
+    for (const j in board[i]) {
+      if (board[i][j] === "E*") {
+        const xPos = x + w * j;
+        const yPos = y + h * i;
+
+        // 画一个红色叉叉
+        ctx.beginPath();
+        ctx.moveTo(xPos, yPos);
+        ctx.lineTo(xPos + w, yPos + h);
+        ctx.moveTo(xPos + w, yPos);
+        ctx.lineTo(xPos, yPos + h);
+        ctx.strokeStyle = "red";
+        ctx.stroke();
+      }
     }
+  }
 }
 
 export function renderColorMark(ctx, board, colorMark, w, h, x, y) {
-    for (const i in colorMark) {
-        for (const j in colorMark[i]) {
-            const color = colorMark[i][j];
-            const xPos = x + w * j;
-            const yPos = y + h * i;
-            if (!color || !["M", "E"].includes(board[i][j])) {
-                
-            } else {
-                // 填充颜色
-                ctx.fillStyle = color;
-                ctx.fillRect(xPos, yPos, w, h);
-            }
-        }
+  for (const i in colorMark) {
+    for (const j in colorMark[i]) {
+      const color = colorMark[i][j];
+      const xPos = x + w * j;
+      const yPos = y + h * i;
+      if (!color || !["M", "E"].includes(board[i][j])) {
+
+      } else {
+        // 填充颜色
+        ctx.fillStyle = color;
+        ctx.fillRect(xPos, yPos, w, h);
+      }
     }
+  }
 }

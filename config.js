@@ -3,16 +3,16 @@ const configKey = 'minesweeper_config2';
 
 export const levels = {
   BEGINNER: {
-      size: [9, 9],
-      n: 10,
+    size: [9, 9],
+    n: 10,
   },
   INTERMEDIATE: {
-      size: [16, 16],
-      n: 40,
+    size: [16, 16],
+    n: 40,
   },
   EXPERT: {
-      size: [16, 30],
-      n: 99,
+    size: [16, 30],
+    n: 99,
   }
 }
 

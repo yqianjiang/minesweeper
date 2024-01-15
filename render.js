@@ -38,36 +38,36 @@ export function render(ctx, level, eventManager) {
   const { digitPars: pars, onClickBtnGroups } = drawStaticBg(ctx, boardHeight, boardWidth, x0, y0);
 
   const facePars = {
-      w: 36,
-      x: x0 + boardWidth / 2 - 18,
-      y: pars.y,
+    w: 36,
+    x: x0 + boardWidth / 2 - 18,
+    y: pars.y,
   }
 
   // 加载多个SVG图片
   const digitImages = loadDigitImages(update);
   const faceImage = loadFaceImages(update);
   const svgImages = loadBoardImages(() => {
-      drawFaceBg(ctx, svgImages["E"], facePars);
-      update();
+    drawFaceBg(ctx, svgImages["E"], facePars);
+    update();
   });
 
   function renderTime(spentTime) {
-      renderDigit(ctx, spentTime, digitImages, { ...pars, x: pars.xleft });
+    renderDigit(ctx, spentTime, digitImages, { ...pars, x: pars.xleft });
   }
   game.setRenderTime(renderTime);
 
-  function update({pressPositions}={}) {
-      if (!pressPositions) {
-          renderDigit(ctx, game.numMineCurr, digitImages, pars);
-          renderTime(game.spentTime);
-          renderFace(ctx, game.state, faceImage, facePars);
-      }
-      renderBoard(ctx, game.board, w, h, svgImages, x0, y0, pressPositions);
-      renderColorMark(ctx, game.board, game.colorMark, w, h, x0, y0);
+  function update({ pressPositions } = {}) {
+    if (!pressPositions) {
+      renderDigit(ctx, game.numMineCurr, digitImages, pars);
+      renderTime(game.spentTime);
+      renderFace(ctx, game.state, faceImage, facePars);
+    }
+    renderBoard(ctx, game.board, w, h, svgImages, x0, y0, pressPositions);
+    renderColorMark(ctx, game.board, game.colorMark, w, h, x0, y0);
 
-      if (game.state === "lose") {
-          renderWrongFlag(ctx, game.board, w, h, x0, y0)
-      }
+    if (game.state === "lose") {
+      renderWrongFlag(ctx, game.board, w, h, x0, y0)
+    }
   }
 
   // 注册事件监听

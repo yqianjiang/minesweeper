@@ -1,43 +1,43 @@
 export class Timer {
-    constructor(callback) {
-        this.callback = callback;
-        this.startTime = null;
-        this.paused = false;
+  constructor(callback) {
+    this.callback = callback;
+    this.startTime = null;
+    this.paused = false;
+  }
+
+  update(timestamp) {
+    if (this.paused) {
+      requestAnimationFrame(this.update.bind(this));
+      return;
     }
 
-    update(timestamp) {
-        if (this.paused) {
-            requestAnimationFrame(this.update.bind(this));
-            return;
-        }
-
-        if (!this.startTime) {
-            this.startTime = timestamp;
-        }
-
-        const elapsedTime = timestamp - this.startTime;
-        if (elapsedTime >= 1000) {
-            this.callback();
-            this.startTime = timestamp;
-        }
-
-        requestAnimationFrame(this.update.bind(this));
+    if (!this.startTime) {
+      this.startTime = timestamp;
     }
 
-    start() {
-        if (!this.paused) {
-            this.clear();
-        }
-        this.paused = false;
-        requestAnimationFrame(this.update.bind(this));
+    const elapsedTime = timestamp - this.startTime;
+    if (elapsedTime >= 1000) {
+      this.callback();
+      this.startTime = timestamp;
     }
 
-    clear() {
-        this.startTime = null;
-        this.pause();
-    }
+    requestAnimationFrame(this.update.bind(this));
+  }
 
-    pause() {
-        this.paused = true;
+  start() {
+    if (!this.paused) {
+      this.clear();
     }
+    this.paused = false;
+    requestAnimationFrame(this.update.bind(this));
+  }
+
+  clear() {
+    this.startTime = null;
+    this.pause();
+  }
+
+  pause() {
+    this.paused = true;
+  }
 }
