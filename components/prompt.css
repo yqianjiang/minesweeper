@@ -52,6 +52,7 @@
     padding: 4px 6px;
     margin: 8px 8px 0;
     border: 1px solid #05467F;
+    font-size: 14px;
 }
 .modal-content input:focus {
     outline: 2px solid #AFC9ED;
@@ -78,6 +79,7 @@
     border-radius: 4px;
     border: 1px solid #05467F;
     background: #F3F2EE;
+    font-size: 14px;
 }
 
 .modal-content button:hover, .modal-content button:focus {
