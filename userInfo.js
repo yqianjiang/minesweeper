@@ -1,11 +1,14 @@
 const infoKey = 'minesweeper';
 
 function generateUUID() {
-  // 能力检测
-  if ("crypto" in window && "randomUUID" in window.crypto) {
-    return window.crypto.randomUUID();
-  }
+  try {
+    // 能力检测
+    if ("crypto" in window && "randomUUID" in window.crypto) {
+      return window.crypto.randomUUID();
+    }
+  } catch (error) {
 
+  }
   // 兼容性处理
   // https://stackoverflow.com/a/2117523/1293256
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
