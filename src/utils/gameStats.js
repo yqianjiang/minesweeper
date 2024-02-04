@@ -49,7 +49,6 @@ class DifficultyStats {
     const body = JSON.stringify({ ...addition, ...data });
     fetch(url, { method: 'POST', headers, body })
       .then(res => res.json())
-      .then(res => console.log(res))
       .catch(err => console.log(err));
   }
 

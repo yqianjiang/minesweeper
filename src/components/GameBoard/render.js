@@ -1,9 +1,9 @@
-import { MineSweeper } from "./game.js";
+import { MineSweeper } from "../../game.js";
 import { drawStaticBg } from "./draw.js";
-import { renderDigit, loadDigitImages } from "./components/digit.js";
-import { renderFace, loadFaceImages, drawFaceBg } from "./components/face.js";
-import { renderBoard, loadBoardImages, renderWrongFlag, renderColorMark } from "./components/board.js";
-import { levels, loadConfig } from './config.js';
+import { renderDigit, loadDigitImages } from "./digit.js";
+import { renderFace, loadFaceImages, drawFaceBg } from "./face.js";
+import { renderBoard, loadBoardImages, renderWrongFlag, renderColorMark } from "./board.js";
+import { levels, loadConfig } from '../../utils/config.js';
 
 // 根据data渲染游戏界面
 export function render(ctx, level, eventManager) {

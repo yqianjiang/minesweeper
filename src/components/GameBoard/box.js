@@ -1,4 +1,4 @@
-import { defaultSizes, defaultStyles } from "../config.js";
+import { defaultSizes, defaultStyles } from "../../utils/config.js";
 
 export class BoxDrawer {
   constructor(ctx, contentHeight, contentWidth, x0, y0, styles = defaultStyles, sizes = defaultSizes) {

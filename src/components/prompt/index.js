@@ -139,7 +139,7 @@ const showModal = (title, msg, onSubmit) => {
   });
 };
 
-import { levels, loadConfig } from '../config.js';
+import { levels, loadConfig } from '../../utils/config.js';
 
 // 自定义弹窗
 const showCustomModal = (title, onSubmit) => {
@@ -250,7 +250,7 @@ const showCustomModal = (title, onSubmit) => {
   });
 };
 
-import gameStats from "../gameStats.js";
+import gameStats from "../../utils/gameStats.js";
 function updateStats(content, scores, stats) {
   // 更新最佳时间
   const bestScores = content.querySelector("#stats-best-scores");

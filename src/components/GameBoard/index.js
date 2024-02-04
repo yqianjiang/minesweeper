@@ -1,8 +1,8 @@
-import { loadConfig } from './config.js';
-import { EventManager, setAutoFlagText } from "./eventManager.js";
+import { loadConfig } from '../../utils/config.js';
+import { EventManager, setAutoFlagText } from "../../eventManager.js";
 import { render } from "./render.js";
 
-function setup() {
+export default function GameBoard() {
   const canvas = document.getElementById("game");
   if (canvas.getContext) {
     const ctx = canvas.getContext("2d");
@@ -17,5 +17,3 @@ function setup() {
     render(ctx, null, eventManager);
   }
 }
-
-setup();

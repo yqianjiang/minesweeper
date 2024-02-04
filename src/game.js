@@ -1,6 +1,6 @@
-import { loadConfig } from './config.js';
-import { submitScore } from './leaderboard.js';
-import { Timer } from './timer.js';
+import { loadConfig } from './utils/config.js';
+import { submitScore } from './components/LeaderBoard/index.js';
+import { Timer } from './utils/timer.js';
 /**
  * 未知的方块表示：
  * 'M' 代表一个 未挖出的 地雷，
