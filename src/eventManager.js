@@ -1,8 +1,8 @@
-import { levels, updateUserConfig } from './config.js';
-import { showCustomModal, showStatsModal } from "./components/prompt.js";
-import { checkClickBtn } from "./utils.js"
-import { render } from "./render.js"
-import colorManager from './colorManager.js';
+import { levels, updateUserConfig } from './utils/config.js';
+import { showCustomModal, showStatsModal } from "./components/prompt/index.js";
+import { checkClickBtn } from "./utils/utils.js"
+import { render } from "./components/GameBoard/render.js"
+import colorManager from './utils/colorManager.js';
 
 const DIG_MODE = 0;
 const FLAG_MODE = 1;

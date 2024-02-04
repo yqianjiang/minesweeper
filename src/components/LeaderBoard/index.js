@@ -1,6 +1,6 @@
-import { showModal, showWinModal } from "./components/prompt.js";
-import gameStats from "./gameStats.js";
-import userInfo from "./userInfo";
+import { showModal, showWinModal } from "../prompt/index.js";
+import gameStats from "../../utils/gameStats.js";
+import userInfo from "../../utils/userInfo.js";
 
 const host = 'https://webgames.fun';
 // const host = 'http://localhost:15004';
