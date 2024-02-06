@@ -1,13 +1,10 @@
 import { showModal, showWinModal } from "../prompt/index.js";
 import gameStats from "../../utils/gameStats.js";
 import userInfo from "../../utils/userInfo.js";
-
-const host = 'https://webgames.fun';
-// const host = 'http://localhost:15004';
+import { fetchLeaderBoard } from "../../utils/api.js";
 
 // 获取按钮和英雄榜元素
 const domLastUpdateTime = document.getElementById("leaderboard-update-time");
-const domBtnRefresh = document.getElementById("btn-refresh-leaderboard");
 const leaderBoard = {
   beginner: document.getElementById("beginner-leaderboard"),
   intermediate: document.getElementById("intermediate-leaderboard"),
@@ -32,19 +29,6 @@ export async function updateLeaderBoard(level) {
   domLastUpdateTime.textContent = new Date().toLocaleString("zh");
 }
 
-async function fetchLeaderBoard(level) {
-  const url = host + '/api/v1/leaderboard/' + level;
-
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    return data?.allTime || [];
-  } catch (err) {
-    console.log(err);
-    return [];
-  }
-}
-
 // 处理提交成绩事件
 export function submitScore(gameData) {
   const level = gameData.difficulty;
@@ -58,7 +42,6 @@ export function submitScore(gameData) {
   if (gameData.win && !userInfo.name) {
     showModal("游戏胜利", `请留尊姓大名`, (playerName) => {
       userInfo.updateName(playerName);
-      domPlayerName.textContent = playerName;
       gameStats.recordGame(gameData, playerName);
       showWinModal(gameData, gameStats);
     });
@@ -69,28 +52,3 @@ export function submitScore(gameData) {
     }
   }
 }
-
-// 初始化英雄榜
-updateLeaderBoard("beginner");
-updateLeaderBoard("intermediate");
-updateLeaderBoard("expert");
-
-// 绑定刷新英雄榜按钮事件
-domBtnRefresh.addEventListener("click", () => {
-  updateLeaderBoard("beginner");
-  updateLeaderBoard("intermediate");
-  updateLeaderBoard("expert");
-});
-
-// 展示玩家昵称
-const domBtnChangeName = document.getElementById("btn-change-name");
-const domPlayerName = document.getElementById("player-name");
-domPlayerName.textContent = userInfo.name;
-
-// 绑定修改昵称按钮事件
-domBtnChangeName.addEventListener("click", () => {
-  showModal("修改昵称", `请输入新的昵称`, (playerName) => {
-    userInfo.updateName(playerName);
-    domPlayerName.textContent = playerName;
-  });
-});

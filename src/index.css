@@ -123,31 +123,6 @@ ol li {
     margin: 10px 0;
 }
 
-.leaderboard {
-    display: flex;
-    justify-content: space-around;
-    text-align: center;
-}
-.leaderboard-section {
-    flex: 1;
-    border: 1px solid #333;
-    padding: 10px;
-    margin: 10px;
-    width: 100%;
-    box-sizing: border-box;
-}
-.leaderboard h3 {
-    font-size: 1.2rem;
-}
-.leaderboard ul {
-    list-style: none;
-    padding: 0;
-}
-.leaderboard li {
-    font-size: 1rem;
-    margin: 5px;
-}
-
 a {
     text-decoration: none;
     color: #0073e6;
@@ -155,13 +130,4 @@ a {
 
 a:hover {
     text-decoration: underline;
-}
-
-@media screen and (max-width: 480px) {
-    .leaderboard {
-        flex-direction: column;
-    }
-    .leaderboard-section {
-        margin: 10px 0;
-    }
 }
