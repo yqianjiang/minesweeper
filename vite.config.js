@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite';
 import viteCompression from 'vite-plugin-compression';
+import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "https://webgames.fun/minesweeper/",
   plugins: [
+    react(),
     viteCompression({
       //生成压缩包.gz/.br
       verbose: true,
