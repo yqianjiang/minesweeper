@@ -124,6 +124,7 @@ const showModal = (title, msg, onSubmit) => {
   const playerNameInput = document.createElement("input");
   playerNameInput.type = "text";
   playerNameInput.id = "playerNameInput";
+  playerNameInput.classList.add('player-name-input');
   playerNameInput.value = "匿名";
   content.appendChild(playerNameInput);
 
@@ -278,7 +279,8 @@ const showStatsModal = () => {
   content.classList.add('stats-modal-content');
 
   const userConfig = loadConfig();
-  const level = userConfig.difficulty.toLowerCase();
+  let level = userConfig.difficulty.toLowerCase();
+  level = level === 'custom' ? 'beginner' : level;  // 如果当前在自定义，就显示初级的统计信息
   const scores = gameStats.getBestScore(level);
   const stats = gameStats.getStats(level);
   // 三列内容，第一列选择难度（初级、中级、高级），第二列列出前5名最佳时间，第三列统计信息

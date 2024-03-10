@@ -15,7 +15,7 @@ import numImageSrc8 from '../../assets/type8.svg';
 
 const numsImageSrc = [numImageSrc0, numImageSrc1, numImageSrc2, numImageSrc3, numImageSrc4, numImageSrc5, numImageSrc6, numImageSrc7, numImageSrc8];
 
-export function loadBoardImages(callback) {
+export function loadBoardImages(callback, onLoadAll) {
   const svgImages = {}
   // 未挖出的方块
   const imageClosed = new Image();
@@ -50,12 +50,21 @@ export function loadBoardImages(callback) {
   imageB.src = numsImageSrc[0];
   svgImages["B"] = imageB;
 
+  let count = 0;
   for (const num in new Array(9).fill(0)) {
     if (num === "0") continue;
     const imageNum = new Image();
     imageNum.src = numsImageSrc[num];
     svgImages[num] = imageNum;
+    imageNum.onload = () => {
+      count++;
+      if (count === 8 && onLoadAll) {
+        console.log('onLoadAll');
+        onLoadAll();
+      }
+    }
   }
+
   return svgImages;
 }
 

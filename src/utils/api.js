@@ -1,3 +1,5 @@
+import userInfo from "./userInfo";
+
 const host = 'https://webgames.fun';
 // const host = 'http://localhost:15004';
 
@@ -14,8 +16,8 @@ export async function fetchLeaderBoard(level) {
   }
 }
 
-export async function submitScore(data) {
-  const url = host + '/api/v1/leaderboard/' + data.difficulty;
+export async function uploadScore({ difficulty, ...data }) {
+  const url = host + '/api/v1/leaderboard/' + difficulty;
   const headers = {
     'Content-Type': 'application/json',
   };

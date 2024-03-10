@@ -1,5 +1,5 @@
 import userInfo from "./userInfo";
-import { submitScore } from "./api";
+import { uploadScore } from "./api"
 const statsKey = 'minesweeper_stats';
 
 // const host = 'https://minesweeper.webgames.fun';
@@ -55,7 +55,7 @@ class DifficultyStats {
         // keep top 5 only
         this.bestScores = [...this.bestScores.slice(0, idx), curr, ...this.bestScores.slice(idx, 4)];
       }
-      submitScore({ name: userInfo.name || '匿名', score: score });
+      uploadScore({ name: userInfo.name || '匿名', score: score, difficulty: this.difficulty });
     } else {
       this.record.push(0);
       this.currentWinStreak = 0;
