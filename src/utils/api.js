@@ -1,6 +1,6 @@
 import userInfo from "./userInfo";
 
-const host = 'https://webgames.fun';
+const host = 'https://test.webgames.fun';
 // const host = 'http://localhost:15004';
 
 export async function fetchLeaderBoard(level) {

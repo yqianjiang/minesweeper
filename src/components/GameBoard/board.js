@@ -59,7 +59,6 @@ export function loadBoardImages(callback, onLoadAll) {
     imageNum.onload = () => {
       count++;
       if (count === 8 && onLoadAll) {
-        console.log('onLoadAll');
         onLoadAll();
       }
     }
