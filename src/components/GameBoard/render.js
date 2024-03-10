@@ -49,7 +49,7 @@ export function render(ctx, level, eventManager) {
   const svgImages = loadBoardImages(() => {
     drawFaceBg(ctx, svgImages["E"], facePars);
     update();
-  });
+  }, () => { renderBoard(ctx, game.board, w, h, svgImages, x0, y0); });
 
   function renderTime(spentTime) {
     renderDigit(ctx, spentTime, digitImages, { ...pars, x: pars.xleft });

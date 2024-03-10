@@ -49,11 +49,18 @@ class UserInfo {
   updateName(name) {
     this.name = name;
     this.saveToStorage();
+    if (this.onUpdateNameFn) {
+      this.onUpdateNameFn(this.name);
+    }
   }
 
   updateUuid(uuid) {
     this.uuid = uuid;
     this.saveToStorage();
+  }
+
+  onNameChange(fn) {
+    this.onUpdateNameFn = fn;
   }
 }
 

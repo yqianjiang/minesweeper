@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import userInfo from "../../utils/userInfo.js";
-import { showModal } from "../prompt/index.js";
-import { fetchLeaderBoard } from "../../utils/api.js";
+import AskNameModal from "../prompt/AskNameModal";
+import userInfo from "../../utils/userInfo";
+import { fetchLeaderBoard } from "../../utils/api";
 import "./style.css";
 
 const levelMap = {
@@ -18,6 +18,7 @@ function LeaderBoard() {
   }
 
   const [playerName, setPlayerName] = useState("");
+  const [showAskNameModal, setShowAskNameModal] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState('---');
   const [leaderBoard, setLeaderBoard] = useState({
     beginner: null,
@@ -26,10 +27,7 @@ function LeaderBoard() {
   });
 
   const handleChangeName = () => {
-    showModal("修改昵称", `请输入新的昵称`, (newName) => {
-      userInfo.updateName(newName);
-      setPlayerName(newName);
-    });
+    setShowAskNameModal(true);
   }
 
   async function updateLeaderBoard(level) {
@@ -56,6 +54,9 @@ function LeaderBoard() {
   // 初始化玩家姓名
   useEffect(() => {
     setPlayerName(userInfo.name);
+    userInfo.onNameChange((newName) => {
+      setPlayerName(newName);
+    });
     updateLeaderBoard("beginner");
     updateLeaderBoard("intermediate");
     updateLeaderBoard("expert");
@@ -91,6 +92,17 @@ function LeaderBoard() {
         }>修改</button>
       </p>
       <p>* 昵称用于展示在扫雷英雄榜中（可重名），修改后的昵称将会在下次游戏获胜上传成绩时生效，已提交的成绩的昵称不会被修改。</p>
+      <AskNameModal
+        open={showAskNameModal}
+        setOpen={setShowAskNameModal}
+        title="修改昵称"
+        msg="请输入新的昵称"
+        defaultName={playerName}
+        onSubmit={(newName) => {
+          userInfo.updateName(newName);
+          setPlayerName(newName);
+        }}
+      />
     </>
   );
 }
