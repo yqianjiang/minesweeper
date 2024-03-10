@@ -1,6 +1,6 @@
 import userInfo from "./userInfo";
 
-const host = 'https://test.webgames.fun';
+const host = 'https://api.minesweeperplay.online';
 // const host = 'http://localhost:15004';
 
 export async function fetchLeaderBoard(level) {
