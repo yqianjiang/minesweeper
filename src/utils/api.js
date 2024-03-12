@@ -31,5 +31,23 @@ export async function uploadScore({ difficulty, ...data }) {
     return res.json();
   } catch (err) {
     console.log(err);
+    // 上传失败，暂时保存在 localStorage
+    const key = `minesweeper-fail`;
+    const localData = localStorage.getItem(key);
+    const errorData = {
+      date: new Date().toISOString(),
+      difficulty,
+      body,
+      error: err,
+    }
+    if (localData) {
+      const data = JSON.parse(localData);
+      data.push(errorData);
+      localStorage
+        .setItem(key, JSON.stringify(data));
+    } else {
+      localStorage
+        .setItem(key, JSON.stringify([errorData]));
+    }
   }
 }

@@ -64,10 +64,11 @@ function LeaderBoard() {
 
   return (
     <>
-      <h2>扫雷英雄榜（在线）</h2>
-      <p>* 现在支持联网的扫雷英雄榜啦！本地成绩仍然可以在游戏菜单的 "扫雷信息统计" 中查看。</p>
-      <p>* 请注意，这个在线英雄榜功能只从 2024 年 1 月 14 日开始收集数据，且功能可能尚未稳定，如果在使用过程中出现任何问题，欢迎加 QQ 群反馈。</p>
-      <div className="leaderboard">
+      <h2>扫雷英雄榜</h2>
+      <p>* 本地成绩可以在游戏菜单的 "扫雷信息统计" 中查看。</p>
+      {/* <p>* 请注意，这个在线英雄榜功能只从 2024 年 1 月 14 日开始收集数据。</p> */}
+      <p>从 2024 年 3 月 12 日开始，由于服务器迁移，在线英雄榜功能暂不可用。</p>
+      {/* <div className="leaderboard">
         {Object.keys(leaderBoard).map((level) => (
           <div className="leaderboard-section" key={level}>
             <h3>{levelMap[level]}</h3>
@@ -84,7 +85,7 @@ function LeaderBoard() {
       <p>
         最后更新时间：<span>{lastUpdateTime}</span>
         <button onClick={handleRefreshLeaderboard}>刷新</button>
-      </p>
+      </p> */}
       <p>
         我的昵称：<span>{playerName}</span>
         <button onClick={
