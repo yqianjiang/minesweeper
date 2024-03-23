@@ -34,7 +34,7 @@ export function submitScore(gameData) {
   const level = gameData.difficulty;
   if (level === "custom") {
     if (gameData.win) {
-      showWinModal(gameData.time);
+      showWinModal(gameData, gameStats);
     }
     return;
   }

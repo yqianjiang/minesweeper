@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper Game Online - Play the Classic Puzzle Game</title>
+    <meta name="description" content="Play the classic Minesweeper game online for free! Recreating the iconic Windows XP version, this web-based Minesweeper lets you enjoy the addictive puzzle game on any computer or mobile device.">
+    <meta name="keywords" content="minesweeper, minesweeper game, online minesweeper, play minesweeper, classic minesweeper, minesweeper web, puzzle games">
+    
+    <link rel="shortcut icon" href="/src/assets/mine.svg" type="image/x-icon">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-09S7KT68GT"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-09S7KT68GT');
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7753546749051554"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="game-window">
+        <h1 class="window-title-bar">
+            Minesweeper
+        </h1>
+        <div class="menu">
+            <button id="menu-btn-game">Game</button>
+            <div class="menu-popup menu-popup-game">
+                <button id="start-btn">New Game (F2)</button>
+                <hr />
+                <button id="beginner-btn">Beginner</button>
+                <button id="intermediate-btn">Intermediate</button>
+                <button id="expert-btn">Expert</button>
+                <button id="custom-btn">Custom...</button>
+                <hr />
+                <button id="autoflag-btn">Turn Off Auto-Flag</button>
+                <hr />
+                <button id="stats-btn">Minesweeper Statistics...</button>
+            </div>
+            <a class="plain-link" href="#help"><button>Help</button></a>
+        </div>
+        <canvas id="game" width="330" height="494"></canvas>
+    </div>
+    <div class="game-window-anno">
+        <p id="game-tips">* Auto-Flag mode is enabled, you can turn it off in the "Game" menu.</p>
+    </div>
+    <div class="game-intros">
+        <p>Experience the classic Minesweeper game online! This web version faithfully recreates the iconic Windows XP Minesweeper, with an added auto-flag feature (which can be disabled). Step on a mine, and it's game over! Get ready for an addictive challenge!</p>
+        <p>If you didn't know the rules of Minesweeper when you were young, thinking it was purely a game of chance... Check out the gameplay introduction below. It's highly recommended - it can unlock a whole new world of strategy!</p>
+        <section id="leaderboard" style="display: none;"></section>
+        <h2 id="help">How to Play Minesweeper</h2>
+        <p>On mobile devices, you can zoom in and drag the canvas to play. Enabling the auto-flag mode makes it easier to play on your phone. iOS users can add this page to their home screen in Safari for quick access.</p>
+        <p>Use the "Game" menu to change the difficulty level.</p>
+        <ul>
+            <li><strong>Left-click:</strong> When in "Dig" mode (default), uncover a square. When in "Flag" mode, place or remove a red flag. When in "Mark" mode, add or remove a temporary colored mark on a square (the mark will be removed automatically when the square is uncovered).</li>
+            <li><strong>Right-click:</strong> Place a red flag to mark a potential mine, click again to remove the flag.</li>
+            <li><strong>Click on numbers:</strong> Left-click on an uncovered number to reveal all surrounding squares, as long as you have marked enough mines around that number.</li>
+            <li><strong>New game:</strong> Click the smiley face or the sad face to start a new game.</li>
+            <li><strong>Auto-Flag:</strong> You can turn the auto-flag feature on or off in the "Game" menu.</li>
+        </ul>
+        <h2>Minesweeper Rules</h2>
+        <p>Minesweeper is a game of chance, but not entirely! There are patterns and strategies you can use to improve your chances of winning.</p>
+        <ul>
+            <li>The board: The Minesweeper board contains two types of squares: safe squares and squares containing mines.</li>
+            <li>Goal: Find all the mines! More precisely, explore all the squares while avoiding the mines. The winning condition is to <strong>uncover all the safe squares</strong>, not just mark all the mine-containing squares.</li>
+            <li>Avoiding mines: By using the information provided by the safe squares, you can deduce whether a surrounding square contains a mine or not.</li>
+            <li>Types of safe squares:
+                <ul>
+                    <li>Numbers: Indicate the number of mines in the <strong>eight surrounding squares</strong>. In the image below, the red square with the number 2 means that there are 2 mines in the eight squares around it, which are marked with red flags.</li>
+                    <img loading="lazy" src="/src/assets/rule-number-neighbor.jpg" alt="Diagram showing the eight surrounding squares of a number" width="100" height="102" />
+                    <li>Blank: Indicates that there are no mines in the surrounding squares. When you click on a blank square, it will automatically uncover the adjacent squares.</li>
+                </ul>
+            </li>
+        </ul>
+        <h2>Minesweeper Tips and Strategies</h2>
+        <p>For beginners: Start by using the number information to find some mines (it's recommended to turn off the "Auto-Flag" mode to practice finding mines yourself).</p>
+        <p>Next step: Combine information from 2-3 numbers to find mines that are not as obvious (if you have the "Auto-Flag" mode on, the obvious mines will be automatically marked, so you'll need to use your reasoning and analysis skills for the remaining squares).</p>
+        <p>Third step: Start recognizing and summarizing common patterns to improve your speed.</p>
+        <p>While many patterns have already been documented, discovering and summarizing them yourself is part of the fun of Minesweeper. Enjoy the process!</p>
+    </div>
+
+    <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

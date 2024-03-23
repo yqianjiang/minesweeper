@@ -349,32 +349,28 @@ const showWinModal = (gameData, gameStats) => {
   // 弹窗内容
   const content = document.createElement("div");
   content.innerHTML = `<p class='center bold'>恭喜！你赢了！</p>
-    <p>时间：${gameData.time} 秒</p>
-    <div class='box'>
-    <div class='row'>
-        <div class='col-6'>
-            <p>最佳时间：${gameStats.getBestScore(gameData.difficulty)[0].time} 秒</p>
-        </div>
-        <div class='col-6'>
-            <p>日期：${gameStats.getBestScore(gameData.difficulty)[0].date}</p>
-        </div>
-    </div>
-    <p>已玩游戏：${gameStats.getStats(gameData.difficulty).totalGames}</p>
-    <div class='row'>
-        <div class='col-6'>
-            <p>已胜游戏：${gameStats.getStats(gameData.difficulty).totalWins}</p>
-        </div>
-        <div class='col-6'>
-            <p>百分比：${(gameStats.getStats(gameData.difficulty).winRate * 100).toFixed(2)}%</p>
-        </div>
-    </div>
-    </div>`
-  // <div class='modal-footer'>
-  //     <button>再玩一局</button>
-  //     <button>关闭窗口</button>
-  // </div>`
-
-  // const content = `恭喜！你赢了！用时${time}秒`
+    <p>时间：${gameData.time} 秒</p>`;
+  if (gameData.difficulty !== "custom") {
+    content.innerHTML += `<div class='box'>
+      <div class='row'>
+          <div class='col-6'>
+              <p>最佳时间：${gameStats.getBestScore(gameData.difficulty)[0].time} 秒</p>
+          </div>
+          <div class='col-6'>
+              <p>日期：${gameStats.getBestScore(gameData.difficulty)[0].date}</p>
+          </div>
+      </div>
+      <p>已玩游戏：${gameStats.getStats(gameData.difficulty).totalGames}</p>
+      <div class='row'>
+          <div class='col-6'>
+              <p>已胜游戏：${gameStats.getStats(gameData.difficulty).totalWins}</p>
+          </div>
+          <div class='col-6'>
+              <p>百分比：${(gameStats.getStats(gameData.difficulty).winRate * 100).toFixed(2)}%</p>
+          </div>
+      </div>
+      </div>`
+  }
   // 创建弹窗
   createModal(title, content, { modalId: 'win' });
 };

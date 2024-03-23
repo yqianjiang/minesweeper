@@ -10,6 +10,12 @@ const levelMap = {
   expert: "高级"
 };
 
+const timeRanges = [
+  { value: 'today', label: '今天' },
+  { value: 'week', label: '本周' },
+  { value: 'allTime', label: '所有时间' }
+];
+
 function LeaderBoard() {
   const handleRefreshLeaderboard = () => {
     updateLeaderBoard("beginner");
@@ -18,12 +24,13 @@ function LeaderBoard() {
   }
 
   const [playerName, setPlayerName] = useState("");
+  const [currentTimeRange, setCurrentTimeRange] = useState("today");
   const [showAskNameModal, setShowAskNameModal] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState('---');
   const [leaderBoard, setLeaderBoard] = useState({
-    beginner: null,
-    intermediate: null,
-    expert: null
+    all: { beginner: null, intermediate: null, expert: null },
+    weekly: { beginner: null, intermediate: null, expert: null },
+    today: { beginner: null, intermediate: null, expert: null }
   });
 
   const handleChangeName = () => {
@@ -32,24 +39,40 @@ function LeaderBoard() {
 
   async function updateLeaderBoard(level) {
     const topScores = await fetchLeaderBoard(level);
-    if (topScores.length) {
-      setLeaderBoard(prevLeaderBoard => ({
-        ...prevLeaderBoard,
-        [level]: topScores.map(({ name, score, create_time: date }, index) => {
-          // 把 date 从 UTC 时间转换成当地时间
-          date = date ? new Date(date + "Z").toLocaleString("zh").split(" ")[0] : null;
-          return `${index + 1}. ${name} - ${score}秒 - ${date || "N/A"}`;
-        })
-      }));
-    } else {
-      setLeaderBoard(prevLeaderBoard => ({
-        ...prevLeaderBoard,
-        [level]: []
-      }));
+    // topScores 是一个对象，分别是几个时间段在某个 level 的数据
+    // 比如 topScores = { all: [], weekly: [], today: [] }
+    for (let timeRange in topScores) {
+      if (topScores[timeRange].length) {
+        setLeaderBoard(prevData => ({
+          ...prevData,
+          [timeRange]: {
+            ...prevData[timeRange],
+            [level]: topScores[timeRange].map(({ name, score, create_time: date }, index) => {
+              // 把 date 从 UTC 时间转换成当地时间
+              date = date ? new Date(date + "Z").toLocaleString("zh").split(" ")[0] : null;
+              return `${index + 1}. ${name} - ${score}秒 - ${date || "N/A"}`;
+            })
+          }
+        }));
+      } else {
+        setLeaderBoard(prevData => ({
+          ...prevData,
+          [timeRange]: {
+            ...prevData[timeRange],
+            [level]: []
+          }
+        }));
+      }
     }
-    
     setLastUpdateTime(new Date().toLocaleString("zh"));
   }
+
+  const handleTimeRangeChange = (timeRange) => {
+    setCurrentTimeRange(timeRange);
+    // updateLeaderBoard("beginner");
+    // updateLeaderBoard("intermediate");
+    // updateLeaderBoard("expert");
+  };
 
   // 初始化玩家姓名
   useEffect(() => {
@@ -66,14 +89,24 @@ function LeaderBoard() {
     <>
       <h2>扫雷英雄榜</h2>
       <p>* 本地成绩可以在游戏菜单的 "扫雷信息统计" 中查看。</p>
-      {/* <p>* 请注意，这个在线英雄榜功能只从 2024 年 1 月 14 日开始收集数据。</p> */}
-      <p>从 2024 年 3 月 12 日开始，由于服务器迁移，在线英雄榜功能暂不可用。</p>
-      {/* <div className="leaderboard">
-        {Object.keys(leaderBoard).map((level) => (
+      <p>* 请注意，这个在线英雄榜功能只从 2024 年 1 月 14 日开始收集数据，且 2024 年 3 月 12 日附近的数据可能存在丢失的情况。</p>
+      <div className="time-range-buttons">
+      {timeRanges.map(({ value, label }) => (
+        <button
+          key={value}
+          className={currentTimeRange === value ? 'selected' : ''}
+          onClick={() => handleTimeRangeChange(value)}
+        >
+          {label}
+        </button>
+      ))}
+      </div>
+      <div className="leaderboard">
+        {Object.keys(leaderBoard[currentTimeRange]).map((level) => (
           <div className="leaderboard-section" key={level}>
             <h3>{levelMap[level]}</h3>
-            {leaderBoard[level] ? leaderBoard[level].length ? <ul>
-              {leaderBoard[level].map((item, index) => (
+            {leaderBoard[currentTimeRange][level] ? leaderBoard[currentTimeRange][level].length ? <ul>
+              {leaderBoard[currentTimeRange][level].map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
             </ul> : 
@@ -84,11 +117,11 @@ function LeaderBoard() {
       </div>
       <p>
         最后更新时间：<span>{lastUpdateTime}</span>
-        <button onClick={handleRefreshLeaderboard}>刷新</button>
-      </p> */}
+        <button className="btn" onClick={handleRefreshLeaderboard}>刷新</button>
+      </p>
       <p>
         我的昵称：<span>{playerName}</span>
-        <button onClick={
+        <button className="btn" onClick={
           handleChangeName
         }>修改</button>
       </p>
