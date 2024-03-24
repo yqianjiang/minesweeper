@@ -50,7 +50,12 @@ function LeaderBoard() {
             [level]: topScores[timeRange].map(({ name, score, create_time: date }, index) => {
               // 把 date 从 UTC 时间转换成当地时间
               date = date ? new Date(date + "Z").toLocaleString("zh").split(" ")[0] : null;
-              return `${index + 1}. ${name} - ${score}秒 - ${date || "N/A"}`;
+              return {
+                rank: index + 1,
+                name,
+                score,
+                date: date || "N/A"
+              };
             })
           }
         }));
@@ -107,7 +112,7 @@ function LeaderBoard() {
             <h3>{levelMap[level]}</h3>
             {leaderBoard[currentTimeRange][level] ? leaderBoard[currentTimeRange][level].length ? <ul>
               {leaderBoard[currentTimeRange][level].map((item, index) => (
-                <li key={index}>{item}</li>
+                <li key={index}>{index + 1}. {item.name} - {item.score}秒 - {item.date || "N/A"}</li>
               ))}
             </ul> : 
             "暂时还没有分数，等你来刷榜哦！"

@@ -3,6 +3,18 @@ import userInfo from "./userInfo";
 const host = 'https://api.minesweeperplay.online';
 // const host = 'http://localhost:15004';
 
+function isValidScore(difficulty, score) {
+  // 根据难度设置合理范围
+  const ranges = {
+    beginner: { min: 0, max: 999 },
+    intermediate: { min: 0, max: 999 },
+    expert: { min: 5, max: 999 }
+  };
+
+  const { min, max } = ranges[difficulty] || {};
+  return typeof score === 'number' && score >= min && score <= max;
+}
+
 export async function fetchLeaderBoard(level) {
   const url = host + '/api/v1/leaderboard/' + level;
 
@@ -17,6 +29,12 @@ export async function fetchLeaderBoard(level) {
 }
 
 export async function uploadScore({ difficulty, ...data }) {
+  const score = data.score;
+  // 客户端验证
+  if (!isValidScore(difficulty, score)) {
+    return;
+  }
+
   const url = host + '/api/v1/leaderboard/' + difficulty;
   const headers = {
     'Content-Type': 'application/json',
