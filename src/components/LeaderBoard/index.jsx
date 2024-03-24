@@ -102,7 +102,7 @@ function LeaderBoard() {
       ))}
       </div>
       <div className="leaderboard">
-        {Object.keys(leaderBoard[currentTimeRange]).map((level) => (
+        {["beginner", "intermediate", "expert"].map((level) => (
           <div className="leaderboard-section" key={level}>
             <h3>{levelMap[level]}</h3>
             {leaderBoard[currentTimeRange][level] ? leaderBoard[currentTimeRange][level].length ? <ul>
