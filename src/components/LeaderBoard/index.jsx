@@ -94,7 +94,7 @@ function LeaderBoard() {
     <>
       <h2>扫雷英雄榜</h2>
       <p>* 本地成绩可以在游戏菜单的 "扫雷信息统计" 中查看。</p>
-      <p>* 请注意，这个在线英雄榜功能只从 2024 年 1 月 14 日开始收集数据，且 2024 年 3 月 12 日附近的数据可能存在丢失的情况。</p>
+      <p>* 在线英雄榜仅展示每个玩家在该难度下的最佳成绩，多次挑战可不断刷新您的个人最高记录喔！</p>
       <div className="time-range-buttons">
       {timeRanges.map(({ value, label }) => (
         <button

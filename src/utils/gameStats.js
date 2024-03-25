@@ -2,10 +2,6 @@ import userInfo from "./userInfo";
 import { uploadScore } from "./api"
 const statsKey = 'minesweeper_stats';
 
-// const host = 'https://minesweeper.webgames.fun';
-const host = 'https://webgames.fun';
-// const host = 'http://localhost:15004';
-
 // 记录单个难度的统计
 class DifficultyStats {
   constructor(difficulty) {
