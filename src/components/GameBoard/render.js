@@ -3,15 +3,15 @@ import { drawStaticBg } from "./draw.js";
 import { renderDigit, loadDigitImages } from "./digit.js";
 import { renderFace, loadFaceImages, drawFaceBg } from "./face.js";
 import { renderBoard, loadBoardImages, renderWrongFlag, renderColorMark } from "./board.js";
-import { levels, loadConfig } from '../../utils/config.js';
+import config, { levelsPars } from '../../utils/config.js';
 
 // 根据data渲染游戏界面
-export function render(ctx, level, eventManager) {
-  const userConfig = loadConfig();
-  level = level || userConfig.level || levels[userConfig.difficulty];
+export function render(ctx, levelPars, eventManager) {
+  const userConfig = config.getConfig();
+  levelPars = levelPars || userConfig.levelPars || levelsPars[userConfig.difficulty];
   ctx.fillStyle = "#C0C0C0";
   ctx.fillRect(0, 0, 330, 494);
-  const game = new MineSweeper(level.size, level.n);
+  const game = new MineSweeper(levelPars.size, levelPars.n);
   const w = 30;
   const h = 30;
   const x0 = 30;

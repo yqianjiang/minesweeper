@@ -1,4 +1,4 @@
-import { levels, updateUserConfig } from './utils/config.js';
+import config, { levelsPars } from './utils/config.js';
 import { showCustomModal, showStatsModal } from "./components/prompt/index.js";
 import { checkClickBtn } from "./utils/utils.js"
 import { render } from "./components/GameBoard/render.js"
@@ -229,7 +229,7 @@ export class EventManager {
 
   handleToggleAutoFlag(autoFlagBtn, gameTipsField) {
     this.game.isAutoFlag = !this.game.isAutoFlag;
-    updateUserConfig("autoFlag", this.game.isAutoFlag);
+    config.updateUserConfig("autoFlag", this.game.isAutoFlag);
     setAutoFlagText(this.game.isAutoFlag, autoFlagBtn, gameTipsField);
     // 收起菜单
     this._hideMenuPopup();
@@ -249,9 +249,9 @@ export class EventManager {
   }
   setLevel(level, customPars) {
     // 更新用户配置
-    updateUserConfig("difficulty", level);
-    const pars = customPars || levels[level];
-    updateUserConfig("level", pars);
+    config.updateUserConfig("difficulty", level);
+    const pars = customPars || levelsPars[level];
+    config.updateUserConfig("level", pars);
 
     const size = pars.size;
     const numMine = pars.n;

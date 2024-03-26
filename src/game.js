@@ -1,4 +1,4 @@
-import { loadConfig } from './utils/config.js';
+import config from './utils/config.js';
 import { submitScore } from './components/LeaderBoard/utils.js';
 import { Timer } from './utils/timer.js';
 /**
@@ -62,7 +62,7 @@ function loadGameState() {
 
 export class MineSweeper {
   constructor(size, numMine) {
-    const userConfig = loadConfig();
+    const userConfig = config.getConfig();
     this.isAutoFlag = userConfig.autoFlag;
     this.isFirstBlank = userConfig.firstBlank;
     this.isFirstSafe = userConfig.firstSafe;
@@ -390,8 +390,7 @@ export class MineSweeper {
   }
 
   recordGame(win) {
-    const userConfig = loadConfig();
-    const difficulty = userConfig.difficulty.toLowerCase();
+    const difficulty = config.getDifficulty();
     const time = Math.floor(this.spentTimeMs * 1000) / 1000;
     submitScore({
       difficulty,

@@ -140,7 +140,7 @@ const showModal = (title, msg, onSubmit) => {
   });
 };
 
-import { levels, loadConfig } from '../../utils/config.js';
+import config, { levelsPars } from '../../utils/config.js';
 
 // 自定义弹窗
 const showCustomModal = (title, onSubmit) => {
@@ -238,8 +238,8 @@ const showCustomModal = (title, onSubmit) => {
     },
     modalId: "custom",
     onShow: () => {
-      const userConfig = loadConfig();
-      const pars = userConfig.level || levels["BEGINNER"];
+      const userConfig = config.getConfig();
+      const pars = userConfig.levelPars || levelsPars["BEGINNER"];
       const rowInput = document.getElementById("rowInput");
       const colInput = document.getElementById("colInput");
       const minesInput = document.getElementById("minesInput");
@@ -278,8 +278,7 @@ const showStatsModal = () => {
   const content = document.createElement("div");
   content.classList.add('stats-modal-content');
 
-  const userConfig = loadConfig();
-  let level = userConfig.difficulty.toLowerCase();
+  let level = config.getDifficulty();
   level = level === 'custom' ? 'beginner' : level;  // 如果当前在自定义，就显示初级的统计信息
   const scores = gameStats.getBestScore(level);
   const stats = gameStats.getStats(level);
@@ -328,8 +327,7 @@ const showStatsModal = () => {
   // 创建弹窗
   createModal(title, content, {
     modalId: 'stats', onShow: () => {
-      const userConfig = loadConfig();
-      const level = userConfig.difficulty.toLowerCase();
+      const level = config.getDifficulty();
       const select = content.querySelector("#stats-difficulty");
       select.value = level;
       select.addEventListener("change", () => {

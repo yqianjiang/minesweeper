@@ -1,7 +1,7 @@
 // config.js
 const configKey = 'minesweeper_config2';
 
-export const levels = {
+export const levelsPars = {
   BEGINNER: {
     size: [9, 9],
     n: 10,
@@ -27,33 +27,44 @@ export const defaultSizes = {
   BORDER_MAIN: 18,
 };
 
-// 默认配置
-const defaultConfig = {
-  difficulty: "BEGINNER",
-  autoFlag: true,
-  firstBlank: true,
-  firstSafe: true,
-  level: levels["BEGINNER"],
-};
+class GameConfig {
+  constructor() {
+    this.config = {
+      difficulty: "BEGINNER",
+      autoFlag: true,
+      firstBlank: true,
+      firstSafe: true,
+      levelPars: levelsPars["BEGINNER"],
+    };
+    this.loadConfig();
+  }
 
-// 从localStorage加载用户配置
-function loadConfig() {
-  const savedConfig = JSON.parse(localStorage.getItem(configKey));
-  return { ...defaultConfig, ...savedConfig };
+  getConfig() {
+    return this.config;
+  }
+
+  getDifficulty() {
+    return this.config.difficulty.toLowerCase();
+  }
+
+  // 从localStorage加载用户配置
+  loadConfig() {
+    const savedConfig = JSON.parse(localStorage.getItem(configKey));
+    this.config = { ...this.getConfig(), ...savedConfig };
+    return this.config;
+  }
+
+  // 保存用户配置到localStorage
+  saveConfig(config) {
+    localStorage.setItem(configKey, JSON.stringify(config));
+  }
+
+  // 用户更改配置后保存配置
+  updateUserConfig(key, value) {
+    this.config[key] = value;
+    this.saveConfig(this.config);
+  }
 }
 
-// 保存用户配置到localStorage
-function saveConfig(config) {
-  localStorage.setItem(configKey, JSON.stringify(config));
-}
-
-// 用户更改配置后保存配置
-function updateUserConfig(key, value) {
-  const userConfig = loadConfig();
-  userConfig[key] = value;
-  saveConfig(userConfig);
-}
-
-
-// 导出配置相关的函数和默认配置
-export { loadConfig, saveConfig, updateUserConfig };
+// 导出全局唯一实例
+export default new GameConfig();
