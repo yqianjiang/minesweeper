@@ -99,9 +99,9 @@
 .modal-content .col-6 p {
     margin: 0 8px;
 }
-.modal-content .col-4 {
-    flex: 0 0 33%;
-    max-width: 33%;
+.modal-content .col-5 {
+    flex: 0 0 43.67%;
+    max-width: 43.67%;
 }
 
 #stats-best-scores {

@@ -255,7 +255,7 @@ import gameStats from "../../utils/gameStats.js";
 function updateStats(content, scores, stats) {
   // 更新最佳时间
   const bestScores = content.querySelector("#stats-best-scores");
-  bestScores.innerHTML = scores.map((score) => `<li class='row'><span class='col-4'>${score.time} 秒</span><span class='col-6'>${score.date}</span></li>`).join('');
+  bestScores.innerHTML = scores.map((score) => `<li class='row'><span class='col-5'>${score.time} 秒</span><span class='col-6'>${score.date}</span></li>`).join('');
 
   // 更新统计信息
   const totalGames = content.querySelector("#stats-total-games");
@@ -297,7 +297,7 @@ const showStatsModal = () => {
         <div>
             <p>最佳时间</p>
             <ul id='stats-best-scores'>
-                ${scores.map((score) => `<li class='row'><span class='col-4'>${score.time} 秒</span><span class='col-6'>${score.date}</span></li>`).join('')}
+                ${scores.map((score) => `<li class='row'><span class='col-5'>${score.time} 秒</span><span class='col-6'>${score.date}</span></li>`).join('')}
             </ul>
         </div>
         <div class="stats-info-col">

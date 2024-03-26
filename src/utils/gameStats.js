@@ -119,7 +119,7 @@ class GameStats {
   recordGame(gameData, playerName) {
     gameData.timestamp = Date.now();
     gameData.clicks.total = gameData.clicks.active + gameData.clicks.wasted;
-    gameData.efficiency = gameData.currBV / gameData.clicks.total;
+    gameData.efficiency = Math.round(gameData.currBV / gameData.clicks.total * 100) / 100;
     this.gameRecords.push(gameData);
 
     const { difficulty } = gameData;

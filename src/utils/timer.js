@@ -5,19 +5,20 @@ export class Timer {
     this.paused = false;
   }
 
-  update(timestamp) {
+  update() {
     if (this.paused) {
       requestAnimationFrame(this.update.bind(this));
       return;
     }
 
+    const timestamp = performance.now();
     if (!this.startTime) {
       this.startTime = timestamp;
     }
 
     const elapsedTime = timestamp - this.startTime;
-    if (elapsedTime >= 1000) {
-      this.callback();
+    if (elapsedTime >= 1) {
+      this.callback(elapsedTime);
       this.startTime = timestamp;
     }
 

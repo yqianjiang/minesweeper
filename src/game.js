@@ -84,6 +84,7 @@ export class MineSweeper {
       this.board = gameState.board;
       this.colorMark = gameState.colorMark;
       this.spentTime = gameState.spentTime;
+      this.spentTimeMs = gameState.spentTimeMs;
       this.clicks = gameState.clicks;
       this.state = gameState.state;
       this.timer = null;
@@ -103,6 +104,7 @@ export class MineSweeper {
     this.board = this.generateBoard();
     this.colorMark = this.generateColorMark(); // 涂色标记
     this.spentTime = 0;
+    this.spentTimeMs = 0;
     this.clicks = {
       active: 0,
       wasted: 0
@@ -176,10 +178,14 @@ export class MineSweeper {
   }
 
   startTiming() {
-    this.timer = new Timer(() => {
-      this.spentTime += 1;
-      this.renderTime(this.spentTime);
-      this.saveGameState();
+    this.timer = new Timer((elapsedTime) => {
+      this.spentTimeMs += elapsedTime / 1000;
+      const spentTime = Math.floor(this.spentTimeMs);
+      if (spentTime !== this.spentTime) {
+        this.spentTime = spentTime;
+        this.renderTime(spentTime);
+        this.saveGameState();
+      }
     })
     this.timer.start();
   }
@@ -386,11 +392,12 @@ export class MineSweeper {
   recordGame(win) {
     const userConfig = loadConfig();
     const difficulty = userConfig.difficulty.toLowerCase();
+    const time = Math.floor(this.spentTimeMs * 1000) / 1000;
     submitScore({
       difficulty,
       win,
       clicks: this.clicks,
-      time: this.spentTime, // todo: 毫秒
+      time,
       bv: this.get3BV(),   // 整个盘面的3BV
       currBV: this.get3BVCurr(),  // 到当前步骤为止的3BV
     });
