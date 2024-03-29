@@ -23,6 +23,7 @@ function LeaderBoard() {
     updateLeaderBoard("expert");
   }
 
+  const [error, setError] = useState(null);
   const [playerName, setPlayerName] = useState("");
   const [currentTimeRange, setCurrentTimeRange] = useState("today");
   const [showAskNameModal, setShowAskNameModal] = useState(false);
@@ -39,6 +40,12 @@ function LeaderBoard() {
 
   async function updateLeaderBoard(level) {
     const topScores = await fetchLeaderBoard(level);
+    if (!topScores) {
+      setError("抱歉，我们的服务暂时遇到一些技术问题。如有任何疑问或建议，可以加 QQ 群 701070434 反馈。");
+      return;
+    }
+    setError(null);
+
     // topScores 是一个对象，分别是几个时间段在某个 level 的数据
     // 比如 topScores = { all: [], weekly: [], today: [] }
     for (let timeRange in topScores) {
@@ -74,9 +81,6 @@ function LeaderBoard() {
 
   const handleTimeRangeChange = (timeRange) => {
     setCurrentTimeRange(timeRange);
-    // updateLeaderBoard("beginner");
-    // updateLeaderBoard("intermediate");
-    // updateLeaderBoard("expert");
   };
 
   // 初始化玩家姓名
@@ -94,32 +98,34 @@ function LeaderBoard() {
     <>
       <h2>扫雷英雄榜</h2>
       <p>* 本地成绩可以在游戏菜单的 "扫雷信息统计" 中查看。</p>
-      <p>* 在线英雄榜仅展示每个玩家在该难度下的最佳成绩，多次挑战可不断刷新您的个人最高记录喔！</p>
-      <div className="time-range-buttons">
-      {timeRanges.map(({ value, label }) => (
-        <button
-          key={value}
-          className={currentTimeRange === value ? 'selected' : ''}
-          onClick={() => handleTimeRangeChange(value)}
-        >
-          {label}
-        </button>
-      ))}
-      </div>
-      <div className="leaderboard">
-        {["beginner", "intermediate", "expert"].map((level) => (
-          <div className="leaderboard-section" key={level}>
-            <h3>{levelMap[level]}</h3>
-            {leaderBoard[currentTimeRange][level] ? leaderBoard[currentTimeRange][level].length ? <ul>
-              {leaderBoard[currentTimeRange][level].map((item, index) => (
-                <li key={index}>{index + 1}. {item.name} - {item.score}秒 - {item.date || "N/A"}</li>
-              ))}
-            </ul> : 
-            "暂时还没有分数，等你来刷榜哦！"
-            : "数据加载中..."}
-          </div>
+      {error ? <p className="error">{error}</p> : <>
+        <p>* 在线英雄榜仅展示每个玩家在该难度下的最佳成绩，多次挑战可不断刷新您的个人最高记录喔！</p>
+        <div className="time-range-buttons">
+        {timeRanges.map(({ value, label }) => (
+          <button
+            key={value}
+            className={currentTimeRange === value ? 'selected' : ''}
+            onClick={() => handleTimeRangeChange(value)}
+          >
+            {label}
+          </button>
         ))}
-      </div>
+        </div>
+        <div className="leaderboard">
+          {["beginner", "intermediate", "expert"].map((level) => (
+            <div className="leaderboard-section" key={level}>
+              <h3>{levelMap[level]}</h3>
+              {leaderBoard[currentTimeRange][level] ? leaderBoard[currentTimeRange][level].length ? <ul>
+                {leaderBoard[currentTimeRange][level].map((item, index) => (
+                  <li key={index}>{index + 1}. {item.name} - {item.score}秒 - {item.date || "N/A"}</li>
+                ))}
+              </ul> : 
+              "暂时还没有分数，等你来刷榜哦！"
+              : "数据加载中..."}
+            </div>
+          ))}
+        </div>
+      </>}
       <p>
         最后更新时间：<span>{lastUpdateTime}</span>
         <button className="btn" onClick={handleRefreshLeaderboard}>刷新</button>
