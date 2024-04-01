@@ -42,6 +42,7 @@ export async function uploadScore({ difficulty, ...data }) {
   const addition = {
     ua: navigator.userAgent,
     uuid: userInfo.uuid,
+    app_version: 'v0.7.3',
   };
   const body = JSON.stringify({ ...addition, ...data });
   try {
