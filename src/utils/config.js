@@ -1,5 +1,5 @@
 // config.js
-const configKey = 'minesweeper_config2';
+const configKey = 'minesweeper_config3';
 
 export const levelsPars = {
   BEGINNER: {
