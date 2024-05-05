@@ -8,6 +8,29 @@ body {
   min-width: fit-content;
 }
 
+.update-banner {
+    font-size: 14px;
+    background-color: #e9ecef; /* 浅灰色背景 */
+    color: #333; /* 文字颜色 */
+    padding: 10px 20px;
+    text-align: center;
+    border-bottom: 1px solid #ddd; /* 下边框 */
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.update-banner button {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.update-banner button:hover {
+    text-decoration: underline;
+}
+
 .game-window {
     background: var(--bg-gray);
     font-size: 0;
