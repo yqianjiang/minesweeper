@@ -2,6 +2,7 @@ import userInfo from "./userInfo";
 
 const host = 'https://api.minesweeperplay.online';
 // const host = 'http://localhost:15004';
+const appVersion = 'v0.7.5';
 
 function isValidScore(difficulty, score) {
   // 根据难度设置合理范围
@@ -42,8 +43,7 @@ export async function uploadScore({ difficulty, ...data }) {
   const addition = {
     ua: navigator.userAgent,
     uuid: userInfo.uuid,
-    app_version: 'v0.7.3',
-    app_version: 'v0.7.4',
+    app_version: appVersion,
   };
   const body = JSON.stringify({ ...addition, ...data });
   try {

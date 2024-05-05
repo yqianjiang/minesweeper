@@ -4,18 +4,8 @@
     --main-blue: #0153E3;
 }
 
-html {
-    background-color: var(--bg-gray);
-    display: flex;
-    justify-content: center;
-}
-
 body {
-    overflow: auto;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    position: relative;
+  min-width: fit-content;
 }
 
 .game-window {
@@ -24,7 +14,7 @@ body {
     border: solid 2px var(--main-blue);
     border-radius: 6px 6px 0 0;
     width: fit-content;
-    margin: 24px auto 0;
+    margin: 0 auto;
 }
 
 #game {
@@ -108,15 +98,6 @@ button {
     background-color: #3368C4;
 }
 
-.game-intros {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
 /* 游戏规则和操作说明样式 */
 ul li,
 ol li {
@@ -130,4 +111,11 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+
+  
+/* 移动端样式 */
+@media (max-width: 768px) {
+
 }
