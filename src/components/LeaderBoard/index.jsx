@@ -94,6 +94,8 @@ function LeaderBoard() {
     updateLeaderBoard("expert");
   }, []);
 
+  if (error) return null;
+
   return (
     <>
       <h2>扫雷英雄榜</h2>

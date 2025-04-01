@@ -16,5 +16,13 @@ export default defineConfig({
       // algorithm: 'brotliCompress',
       // ext: '.br',
     }),
-  ]
+  ],
+  build: {
+    rollupOptions: {
+      input: {
+        'zh': './index.html',
+        'en': './en/index.html',
+      },
+    },
+  },
 });
