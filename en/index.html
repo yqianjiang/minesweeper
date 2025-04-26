@@ -9,6 +9,8 @@
     <meta name="keywords" content="minesweeper, minesweeper game, online minesweeper, play minesweeper, classic minesweeper, minesweeper web, puzzle games">
     
     <link rel="shortcut icon" href="/src/assets/mine.svg" type="image/x-icon">
+    <link ref="canonical" href="https://minesweeperplay.online/en">
+    <link ref="alternate" href="https://minesweeperplay.online" hreflang="zh">
     <link rel="stylesheet" href="/src/index.css">
     <link rel="stylesheet" href="/src/layout.css">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-09S7KT68GT"></script>
@@ -52,13 +54,28 @@
           ></path>
         </svg>
       </a>
-      <nav class="nav">
-        <a title="game list" href="https://webgames.fun/en/">All games</a
-        >
-        <span class="current">Minesweeper</span>
-        <a title="tetris" href="https://tetris.webgames.fun/">Tetris</a>
-        <a title="sudoku" href="https://sudoku.webgames.fun/">Sudoku</a>
-      </nav>
+      <div class="navContainer">
+        <nav class="desktopNav">
+          <a title="game list" href="https://webgames.fun/en/" target="_blank">All games</a
+          >
+          <span class="current">Minesweeper</span>
+          <a title="tetris" href="https://tetris.webgames.fun/" target="_blank">Tetris</a>
+          <a title="sudoku" href="https://sudoku.webgames.fun/" target="_blank">Sudoku</a>
+        </nav>
+        <button class="mobileMenuButton" aria-label="Menu">
+          <span class="hamburger"></span>
+        </button>
+
+        <div class="mobileMenu">
+          <nav class="mobileNav">
+            <a title="game list" href="https://webgames.fun/en/" target="_blank">All games</a
+            >
+            <span class="current">Minesweeper</span>
+            <a title="tetris" href="https://tetris.webgames.fun/" target="_blank">Tetris</a>
+            <a title="sudoku" href="https://sudoku.webgames.fun/" target="_blank">Sudoku</a>
+          </nav>
+        </div>
+      </div>
     </div>
   </header>
   <main>

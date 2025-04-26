@@ -8,6 +8,8 @@
     <meta name="description" content="网页版扫雷游戏，还原经典的 Window XP 版扫雷，电脑和手机直接打开就能在线玩扫雷，不用下载安装APP。">
     <meta name="keywords" content="扫雷游戏, 扫雷手机版，扫雷在线玩, 扫雷网页版, 经典游戏, 益智游戏">
     <link rel="shortcut icon" href="/src/assets/mine.svg" type="image/x-icon">
+    <link ref="canonical" href="https://minesweeperplay.online">
+    <link ref="alternate" href="https://minesweeperplay.online/en" hreflang="en">
     <link rel="stylesheet" href="/src/index.css">
     <link rel="stylesheet" href="/src/layout.css">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-09S7KT68GT"></script>
@@ -22,7 +24,7 @@
     crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body style="overscroll-behavior: none;">
   <header class="header">
     <div class="container">
       <a title="快乐屋首页" href="https://webgames.fun/zh/"
@@ -51,13 +53,27 @@
           ></path>
         </svg>
       </a>
-      <nav class="nav">
-        <a title="经典小游戏列表" href="https://webgames.fun/zh/">全部游戏</a
-        >
-        <span class="current">扫雷</span>
-        <a title="俄罗斯方块" href="https://tetris.webgames.fun/">俄罗斯方块</a>
-        <a title="数独" href="https://sudoku.webgames.fun/zh/">数独</a>
-      </nav>
+      <div class="navContainer">
+        <nav class="desktopNav">
+          <a title="经典小游戏列表" href="https://webgames.fun/zh/" target="_blank">全部游戏</a
+          >
+          <span class="current">扫雷</span>
+          <a title="俄罗斯方块" href="https://tetris.webgames.fun/" target="_blank">俄罗斯方块</a>
+          <a title="数独" href="https://sudoku.webgames.fun/zh/" target="_blank">数独</a>
+        </nav>
+        <button class="mobileMenuButton" aria-label="菜单">
+          <span class="hamburger"></span>
+        </button>
+
+        <div class="mobileMenu">
+          <nav class="mobileNav">
+            <a title="经典小游戏列表" href="https://webgames.fun/zh/" target="_blank">全部游戏</a>
+            <span class="current">扫雷</span>
+            <a title="俄罗斯方块" href="https://tetris.webgames.fun/" target="_blank">俄罗斯方块</a>
+            <a title="数独" href="https://sudoku.webgames.fun/zh/" target="_blank">数独</a>
+          </nav>
+        </div>
+      </div>
     </div>
   </header>
   <main>

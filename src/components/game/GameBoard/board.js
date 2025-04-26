@@ -1,17 +1,17 @@
-import closedImageSrc from '../../assets/closed.svg';
-import flagImageSrc from '../../assets/flag.svg';
-import questionImageSrc from '../../assets/closed_flag.svg';
-import mineRedImageSrc from '../../assets/mine_red.svg';
-import mineImageSrc from '../../assets/mine.svg';
-import numImageSrc0 from '../../assets/type0.svg';
-import numImageSrc1 from '../../assets/type1.svg';
-import numImageSrc2 from '../../assets/type2.svg';
-import numImageSrc3 from '../../assets/type3.svg';
-import numImageSrc4 from '../../assets/type4.svg';
-import numImageSrc5 from '../../assets/type5.svg';
-import numImageSrc6 from '../../assets/type6.svg';
-import numImageSrc7 from '../../assets/type7.svg';
-import numImageSrc8 from '../../assets/type8.svg';
+import closedImageSrc from '@/assets/closed.svg';
+import flagImageSrc from '@/assets/flag.svg';
+import questionImageSrc from '@/assets/closed_flag.svg';
+import mineRedImageSrc from '@/assets/mine_red.svg';
+import mineImageSrc from '@/assets/mine.svg';
+import numImageSrc0 from '@/assets/type0.svg';
+import numImageSrc1 from '@/assets/type1.svg';
+import numImageSrc2 from '@/assets/type2.svg';
+import numImageSrc3 from '@/assets/type3.svg';
+import numImageSrc4 from '@/assets/type4.svg';
+import numImageSrc5 from '@/assets/type5.svg';
+import numImageSrc6 from '@/assets/type6.svg';
+import numImageSrc7 from '@/assets/type7.svg';
+import numImageSrc8 from '@/assets/type8.svg';
 
 const numsImageSrc = [numImageSrc0, numImageSrc1, numImageSrc2, numImageSrc3, numImageSrc4, numImageSrc5, numImageSrc6, numImageSrc7, numImageSrc8];
 

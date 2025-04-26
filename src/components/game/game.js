@@ -1,5 +1,5 @@
-import config from './utils/config.js';
-import { submitScore } from './components/LeaderBoard/utils.js';
+import config from './config.js';
+import { submitScore } from '@/components/LeaderBoard/utils.js';
 import { Timer } from './utils/timer.js';
 /**
  * 未知的方块表示：

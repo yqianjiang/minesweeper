@@ -1,7 +1,7 @@
-import config, { levelsPars } from './utils/config.js';
-import { showCustomModal, showStatsModal } from "./components/prompt/index.js";
-import { checkClickBtn } from "./utils/utils.js"
-import { render } from "./components/GameBoard/render.js"
+import { showCustomModal, showStatsModal } from "@/components/prompt/index.js";
+import { render } from "./GameBoard/render.js"
+import config, { levelsPars } from './config.js';
+import { checkClickBtn } from "./utils/index.js"
 import colorManager from './utils/colorManager.js';
 
 const DIG_MODE = 0;

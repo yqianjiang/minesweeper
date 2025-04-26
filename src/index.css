@@ -2,6 +2,17 @@
     --bg-gray: #C0C0C0;
     --bg-gray-light: #ECE9D8;
     --main-blue: #0153E3;
+    --primary-color: #ff8a00;
+    --primary-light: #ffead1;
+    --primary-dark: #e67e00;
+    --text-color: #333;
+    --text-color-secondary: #666;
+    --background-color: #fafafa;
+    --card-background: #ffffff;
+    --border-radius: 12px;
+    --box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    --transition: all 0.25s ease;
+    --box-shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 body {

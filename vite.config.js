@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import viteCompression from 'vite-plugin-compression';
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,6 +18,11 @@ export default defineConfig({
       // ext: '.br',
     }),
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  },
   build: {
     rollupOptions: {
       input: {

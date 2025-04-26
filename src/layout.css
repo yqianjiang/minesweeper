@@ -5,7 +5,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   line-height: 1.6;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .container {
@@ -16,33 +16,174 @@ body {
 .header {
   background-color: #fff;
   color: var(--text-color);
-  padding: 10px;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
 }
 
 header .container {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 .header span {
   margin-right: 20px;
 }
 
 .logo {
-  height: 48px;
+  height: 42px;
   width: auto;
   margin-right: 40px;
 }
 
-.nav {
+.navContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-grow: 1;
+}
+
+/* 桌面导航 */
+.desktopNav {
   display: flex;
   align-items: center;
 }
 
-.nav a {
+
+.desktopNav a {
   color: var(--text-color);
-  margin-right: 20px;
+  margin-right: 24px;
+  padding: 6px 4px;
+  position: relative;
 }
 
-.nav .current {
+.desktopNav a:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.desktopNav a:hover:after {
+  width: 100%;
+}
+
+.desktopNav .current {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.desktopNav .current:after {
+  width: 100%;
+}
+
+.header a:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+/* 移动端汉堡菜单按钮 */
+.mobileMenuButton {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  z-index: 10;
+}
+
+.hamburger {
+  display: block;
+  position: relative;
+  width: 18px;
+  height: 2px;
+  background: var(--text-color);
+  transition: background 0.3s ease;
+  margin-right: 0 !important;
+}
+
+.hamburger::before,
+.hamburger::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 2px;
+  background: var(--text-color);
+  left: 0;
+  transition: transform 0.3s ease;
+}
+
+.hamburger::before {
+  top: -6px;
+}
+
+.hamburger::after {
+  bottom: -6px;
+}
+
+.mobileMenuButton.open .hamburger {
+  background: transparent;
+}
+
+.mobileMenuButton.open .hamburger::before {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobileMenuButton.open .hamburger::after {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* 移动端菜单 */
+.mobileMenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+
+.mobileMenu.open {
+  max-height: 300px;
+  padding: 10px 0;
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+}
+
+.mobileNav a,
+.mobileNav span {
+  padding: 12px 0;
+  margin: 0;
+  border-bottom: 1px solid #eee;
+  display: block;
+  width: 100%;
+}
+
+.mobileNav a:last-child {
+  border-bottom: none;
+}
+
+.mobileNav .current {
   color: var(--primary-color);
   font-weight: bold;
 }
@@ -107,7 +248,7 @@ main .container {
   height: 5px;
   top: 50%;
   margin-top: -2.5px;
-  right: -15px;
+  right: -16px;
   background: var(--text-color-secondary);
 }
 
@@ -129,16 +270,20 @@ main .container {
     padding: 10px 0;
   }
 
-  .nav {
+  .navContainer {
+    gap: 16px;
+  }
+
+  .desktopNav {
     display: none;
   }
 
-  .nav a {
-    margin-right: 0;
+  .mobileMenuButton {
+    display: block;
   }
 
-  .nav .current {
-    font-weight: normal;
+  .mobileMenu {
+    display: block;
   }
 
   main {

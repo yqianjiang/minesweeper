@@ -1,5 +1,5 @@
-import config from '../../utils/config.js';
-import { EventManager, setAutoFlagText } from "../../eventManager.js";
+import config from '../config.js';
+import { EventManager, setAutoFlagText } from "../eventManager.js";
 import { render } from "./render.js";
 
 export default function GameBoard() {

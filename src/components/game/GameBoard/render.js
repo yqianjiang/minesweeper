@@ -1,9 +1,9 @@
-import { MineSweeper } from "../../game.js";
+import { MineSweeper } from "../game.js";
 import { drawStaticBg } from "./draw.js";
 import { renderDigit, loadDigitImages } from "./digit.js";
 import { renderFace, loadFaceImages, drawFaceBg } from "./face.js";
 import { renderBoard, loadBoardImages, renderWrongFlag, renderColorMark } from "./board.js";
-import config, { levelsPars } from '../../utils/config.js';
+import config, { levelsPars } from '../config.js';
 
 // 根据data渲染游戏界面
 export function render(ctx, levelPars, eventManager) {

@@ -1,8 +1,8 @@
 import { drawDigitBg } from "./digit.js"
 import { BoxDrawer } from "./box.js"
-import { defaultSizes as size, defaultStyles as color } from "../../utils/config.js"
-import { checkClickBtn } from "../../utils/utils.js"
-import colorManager from "../../utils/colorManager.js"
+import { defaultSizes as size, defaultStyles as color } from "../config.js"
+import { checkClickBtn } from "../utils/index.js"
+import colorManager from "../utils/colorManager.js"
 
 const H_TOOLBOX = 52;
 const OUTER_SIZE = size.BORDER_INNER * 2 + size.BORDER_MAIN;

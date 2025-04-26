@@ -1,7 +1,7 @@
-import { showModal, showWinModal } from "../prompt/index.js";
-import gameStats from "../../utils/gameStats.js";
-import userInfo from "../../utils/userInfo.js";
-import { fetchLeaderBoard } from "../../utils/api.js";
+import { showModal, showWinModal } from "@/components/prompt/index.js";
+import gameStats from "@/utils/gameStats.js";
+import userInfo from "@/utils/userInfo.js";
+import { fetchLeaderBoard } from "@/utils/api.js";
 
 // 获取按钮和英雄榜元素
 const domLastUpdateTime = document.getElementById("leaderboard-update-time");

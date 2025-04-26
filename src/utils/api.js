@@ -1,8 +1,8 @@
-import userInfo from "./userInfo";
+import userInfo from "@/utils/userInfo.js";
 
 const host = 'https://api.minesweeperplay.online';
 // const host = 'http://localhost:15004';
-const appVersion = 'v0.7.5';
+const appVersion = 'v0.7.6';
 
 function isValidScore(difficulty, score) {
   // 根据难度设置合理范围

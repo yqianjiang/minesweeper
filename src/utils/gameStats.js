@@ -1,6 +1,8 @@
 import userInfo from "./userInfo";
-import { uploadScore } from "./api"
-const statsKey = 'minesweeper_stats';
+import { uploadScore } from "./api.js";
+import { searchInsert } from "./searchInsert.js";
+
+const STATS_STORE_KEY = 'minesweeper_stats';
 
 // 记录单个难度的统计
 class DifficultyStats {
@@ -71,7 +73,7 @@ class DifficultyStats {
   // 在本地存储中加载统计数据
   loadFromStorage() {
     try {
-      const savedStats = JSON.parse(localStorage.getItem(statsKey + 'Stats' + this.difficulty));
+      const savedStats = JSON.parse(localStorage.getItem(STATS_STORE_KEY + 'Stats' + this.difficulty));
       for (const key in savedStats) {
         this[key] = savedStats[key];
       }
@@ -84,7 +86,7 @@ class DifficultyStats {
 
   // 保存统计数据到本地存储
   saveToStorage() {
-    localStorage.setItem(statsKey + 'Stats' + this.difficulty, JSON.stringify(this.getStats()));
+    localStorage.setItem(STATS_STORE_KEY + 'Stats' + this.difficulty, JSON.stringify(this.getStats()));
     localStorage.setItem(`${this.difficulty}-scores`, JSON.stringify(this.bestScores));
   }
 
@@ -143,7 +145,7 @@ class GameStats {
   // 在本地存储中加载统计数据
   loadFromStorage() {
     try {
-      const savedRecords = JSON.parse(localStorage.getItem(statsKey + 'Records'));
+      const savedRecords = JSON.parse(localStorage.getItem(STATS_STORE_KEY + 'Records'));
       if (savedRecords) {
         this.gameRecords = savedRecords;
       }
@@ -157,7 +159,7 @@ class GameStats {
 
   // 保存统计数据到本地存储
   saveToStorage() {
-    localStorage.setItem(statsKey + 'Records', JSON.stringify(this.gameRecords));
+    localStorage.setItem(STATS_STORE_KEY + 'Records', JSON.stringify(this.gameRecords));
     this.beginnerStats.saveToStorage();
     this.intermediateStats.saveToStorage();
     this.expertStats.saveToStorage();
@@ -178,34 +180,3 @@ class GameStats {
 
 const gameStats = new GameStats();
 export default gameStats;
-
-// 使用:
-// gameStats.recordGame({
-//   difficulty: 'beginner',
-//   win: true,
-//   clicks: {
-//     active: 180,
-//     wasted: 20,
-//   },
-//   time: 60000, // 毫秒
-//   bv: 12,
-//   currBV: 12,
-// });
-// gameStats.getStats("beginner");
-
-function searchInsert(nums, target) {
-  // nums有序：二分法
-  let left = 0, right = nums.length - 1;
-  while (left <= right) {
-    const middle = left + Math.floor((right - left) / 2);
-    if (target === nums[middle].time) {
-      return middle;
-    }
-    if (target > nums[middle].time) {
-      left = middle + 1;
-    } else {
-      right = middle - 1;
-    }
-  }
-  return left;
-};

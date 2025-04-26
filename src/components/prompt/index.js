@@ -1,3 +1,6 @@
+import config, { levelsPars } from '@/components/game/config.js';
+import gameStats from "../../utils/gameStats.js";
+
 // 通用弹窗
 const modals = {};
 const createModal = (title, content, { onSubmit, onBeforeClose, modalId, onShow }) => {
@@ -140,8 +143,6 @@ const showModal = (title, msg, onSubmit) => {
   });
 };
 
-import config, { levelsPars } from '../../utils/config.js';
-
 // 自定义弹窗
 const showCustomModal = (title, onSubmit) => {
   // 创建弹窗内容
@@ -251,7 +252,6 @@ const showCustomModal = (title, onSubmit) => {
   });
 };
 
-import gameStats from "../../utils/gameStats.js";
 function updateStats(content, scores, stats) {
   // 更新最佳时间
   const bestScores = content.querySelector("#stats-best-scores");
