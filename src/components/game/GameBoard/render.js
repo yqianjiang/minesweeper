@@ -8,10 +8,30 @@ import config, { levelsPars } from '../config.js';
 // 根据data渲染游戏界面
 export function render(ctx, levelPars, eventManager) {
   const userConfig = config.getConfig();
-  levelPars = levelPars || userConfig.levelPars || levelsPars[userConfig.difficulty];
+  const difficulty = userConfig.difficulty;
+  levelPars = levelPars
+    || (difficulty === "CUSTOM" ? userConfig.levelPars : levelsPars[difficulty])
+    || levelsPars.BEGINNER;
   ctx.fillStyle = "#C0C0C0";
   ctx.fillRect(0, 0, 330, 494);
-  const game = new MineSweeper(levelPars.size, levelPars.n);
+  const game = new MineSweeper(levelPars.size, levelPars.n, difficulty);
+  const gameDifficulty = game.difficulty.toUpperCase();
+  const savedSize = userConfig.levelPars?.size;
+  const isConfigInSync = userConfig.difficulty === gameDifficulty
+    && userConfig.levelPars?.n === game.numMine
+    && Array.isArray(savedSize)
+    && savedSize.length === game.size.length
+    && savedSize.every((value, index) => value === game.size[index]);
+
+  if (!isConfigInSync) {
+    config.updateUserConfigs({
+      difficulty: gameDifficulty,
+      levelPars: {
+        size: [...game.size],
+        n: game.numMine,
+      },
+    });
+  }
   const w = 30;
   const h = 30;
   const x0 = 30;

@@ -1,4 +1,4 @@
-import config from './config.js';
+import config, { resolveGameDifficulty } from './config.js';
 import { submitScore } from '@/components/LeaderBoard/utils.js';
 import { Timer } from './utils/timer.js';
 /**
@@ -61,13 +61,14 @@ function loadGameState() {
 }
 
 export class MineSweeper {
-  constructor(size, numMine) {
+  constructor(size, numMine, difficulty) {
     const userConfig = config.getConfig();
     this.isAutoFlag = userConfig.autoFlag;
     this.isFirstBlank = userConfig.firstBlank;
     this.isFirstSafe = userConfig.firstSafe;
+    this.difficulty = resolveGameDifficulty(difficulty, size, numMine);
     if (!this.loadGameState()) {
-      this.setSize(size, numMine);
+      this.setSize(size, numMine, difficulty);
     }
   }
 
@@ -80,6 +81,11 @@ export class MineSweeper {
     if (gameState) {
       this.size = gameState.size;
       this.numMine = gameState.numMine;
+      this.difficulty = resolveGameDifficulty(
+        gameState.difficulty,
+        gameState.size,
+        gameState.numMine,
+      );
       this.numMineCurr = gameState.numMineCurr;
       this.board = gameState.board;
       this.colorMark = gameState.colorMark;
@@ -93,9 +99,10 @@ export class MineSweeper {
     return false;
   }
 
-  setSize(size, numMine) {
+  setSize(size, numMine, difficulty = this.difficulty) {
     this.size = size;
     this.numMine = numMine;
+    this.difficulty = resolveGameDifficulty(difficulty, size, numMine);
     this.restart();
   }
 
@@ -390,10 +397,9 @@ export class MineSweeper {
   }
 
   recordGame(win) {
-    const difficulty = config.getDifficulty();
     const time = Math.floor(this.spentTimeMs * 1000) / 1000;
     submitScore({
-      difficulty,
+      difficulty: this.difficulty,
       win,
       clicks: this.clicks,
       time,

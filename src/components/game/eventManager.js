@@ -248,14 +248,16 @@ export class EventManager {
     render(this.ctx, pars, this);
   }
   setLevel(level, customPars) {
-    // 更新用户配置
-    config.updateUserConfig("difficulty", level);
     const pars = customPars || levelsPars[level];
-    config.updateUserConfig("level", pars);
+    // 难度和棋盘参数一次保存，避免持久化状态短暂不一致。
+    config.updateUserConfigs({
+      difficulty: level,
+      levelPars: pars,
+    });
 
     const size = pars.size;
     const numMine = pars.n;
-    this.game.setSize(size, numMine);
+    this.game.setSize(size, numMine, level);
     this._reRender(pars);
   }
 }
