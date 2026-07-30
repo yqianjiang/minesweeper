@@ -11,8 +11,8 @@ const levelMap = {
 };
 
 const timeRanges = [
-  { value: 'today', label: '今天' },
-  { value: 'week', label: '本周' },
+  { value: 'today', label: '最近24小时' },
+  { value: 'week', label: '最近7天' },
   { value: 'allTime', label: '所有时间' }
 ];
 
