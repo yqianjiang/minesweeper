@@ -1,8 +1,9 @@
 import userInfo from "@/utils/userInfo.js";
+import { levelsPars } from "@/components/game/config.js";
 
 const host = 'https://api.minesweeperplay.online';
 // const host = 'http://localhost:15004';
-const appVersion = 'v0.7.7';
+const appVersion = 'v0.7.8';
 
 function isValidScore(difficulty, score) {
   // 根据难度设置合理范围
@@ -14,6 +15,14 @@ function isValidScore(difficulty, score) {
 
   const { min, max } = ranges[difficulty] || {};
   return typeof score === 'number' && score >= min && score <= max;
+}
+
+function isValidBoard(difficulty, rows, cols, mines) {
+  const board = levelsPars[difficulty?.toUpperCase()];
+  return board
+    && board.size[0] === rows
+    && board.size[1] === cols
+    && board.n === mines;
 }
 
 export async function fetchLeaderBoard(level) {
@@ -30,9 +39,12 @@ export async function fetchLeaderBoard(level) {
 }
 
 export async function uploadScore({ difficulty, ...data }) {
-  const score = data.score;
+  const { score, rows, cols, mines } = data;
   // 客户端验证
-  if (!isValidScore(difficulty, score)) {
+  if (
+    !isValidScore(difficulty, score)
+    || !isValidBoard(difficulty, rows, cols, mines)
+  ) {
     return;
   }
 

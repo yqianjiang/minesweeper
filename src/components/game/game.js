@@ -401,6 +401,9 @@ export class MineSweeper {
     submitScore({
       difficulty: this.difficulty,
       win,
+      rows: this.size[0],
+      cols: this.size[1],
+      mines: this.numMine,
       clicks: this.clicks,
       time,
       bv: this.get3BV(),   // 整个盘面的3BV

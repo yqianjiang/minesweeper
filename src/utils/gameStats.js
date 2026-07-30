@@ -34,7 +34,7 @@ class DifficultyStats {
     return this.bestScores.length < 5 || score < this.bestScores.slice(-1)[0].time;
   }
 
-  recordGame({ win, score, playerName }) {
+  recordGame({ win, score, playerName, rows, cols, mines }) {
     if (playerName) {
       userInfo.updateName(playerName);
     }
@@ -53,7 +53,14 @@ class DifficultyStats {
         // keep top 5 only
         this.bestScores = [...this.bestScores.slice(0, idx), curr, ...this.bestScores.slice(idx, 4)];
       }
-      uploadScore({ name: userInfo.name || '匿名', score: score, difficulty: this.difficulty });
+      uploadScore({
+        name: userInfo.name || '匿名',
+        score,
+        difficulty: this.difficulty,
+        rows,
+        cols,
+        mines,
+      });
     } else {
       this.record.push(0);
       this.currentWinStreak = 0;
@@ -125,7 +132,14 @@ class GameStats {
     this.gameRecords.push(gameData);
 
     const { difficulty } = gameData;
-    this[`${difficulty}Stats`].recordGame({ win: gameData.win, score: gameData.time, playerName });
+    this[`${difficulty}Stats`].recordGame({
+      win: gameData.win,
+      score: gameData.time,
+      playerName,
+      rows: gameData.rows,
+      cols: gameData.cols,
+      mines: gameData.mines,
+    });
 
     this.saveToStorage();
   }
